@@ -1,4 +1,4 @@
 int main(){
     print_int(5);
-    return 0
+    return 0;
 }
