@@ -5,6 +5,7 @@ type stmt =
   | Sbinopi of binopi*registre*registre*expr
   | Sbinop of binop*registre*registre*registre 
   | Smonopi of monopi*registre*expr
+  | Smonop of monop*registre*registre
   | Sjump of jump
   | Ssyscall
 
@@ -24,6 +25,8 @@ and binop = |Or |And |Xor |Add |Div |Mul |Sub
 and binopi = |Ori | Andi |Xori |Addi |Subi |Lw |Sw
 
 and monopi = |Li 
+
+and monop = |Move
 
 
 
