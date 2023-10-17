@@ -3,19 +3,19 @@
 (menhir
  (modules parser))
 (library
-  (name eval)
-  (modules lexer parser ast runtime eval)
+  (name reader)
+  (modules lexer parser ast_c ast_bytecode compiler reader)
   (libraries unix)
 )
 (executable
  (name ptigcc)
  (promote (until-clean))
  (modules ptigcc)
- (libraries unix eval)
+ (libraries unix reader)
  (flags ())
 )
 (test
  (name test)
  (modules test)
- (libraries unix eval)
+ (libraries unix reader)
  (flags ()))
