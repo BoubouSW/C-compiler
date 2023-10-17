@@ -15,8 +15,4 @@ let _main =
     eprintf "Le fichier d'entrée doit avoir l'extension .c\n";
     exit 1
   end;
-  Reader.read_file ifile 
-
-
-
-
+  Reader.read_file ifile
