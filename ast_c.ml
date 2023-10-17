@@ -3,7 +3,8 @@
 type stmt =
   | Sval of expr
   | Sblock of stmt list
-  | Sprintint of int
+  | Sprintint of expr
+  | Sreturn of expr
 
 and expr =
   | Const of const
@@ -11,10 +12,14 @@ and expr =
   | Ecall of string * expr list
 
 and const = 
-  | Int of int
-  | Void
+  | Inti of int
+  | Null
 
-and binop = Add
+and binop = Add | Sub | Mul | Div | Mod
 
-type def = { typ : const ; name : string ; args : string list ; body : stmt ; }
+and types =
+  |Int
+  |Void
+
+type def = { typ : types ; name : string ; args : string list ; body : stmt ; }
 and prog = { defs : def list ; }
