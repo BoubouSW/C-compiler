@@ -14,8 +14,3 @@
  (libraries unix reader)
  (flags ())
 )
-(test
- (name test)
- (modules test)
- (libraries unix reader)
- (flags ()))
