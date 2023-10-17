@@ -11,7 +11,7 @@
 %token LP RP LB RB
 %token PLUS MINUS TIMES DIV MOD
 (*%token EQ*)
-%token COLON SEMICOLON
+%token COMMA SEMICOLON
 
 /* def priorites */
 
@@ -37,7 +37,7 @@ types:
 type_args_fun:
   | types i = IDENT { i }
 
-def: tip = types ; nom = IDENT ; LP ; args = separated_list(COLON,type_args_fun) ; RP ; bod =  suite 
+def: tip = types ; nom = IDENT ; LP ; args = separated_list(COMMA,type_args_fun) ; RP ; bod =  suite 
   {{typ = tip ; name = nom ; args = args ; body = bod }}
 ;
 

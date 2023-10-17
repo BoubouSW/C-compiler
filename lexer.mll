@@ -32,7 +32,7 @@ rule token = parse
 (*| '='     { EQ } *)
   | '('     { LP }
   | ')'     { RP }
-  | ','     { COLON }
+  | ','     { COMMA }
   | ';'     { SEMICOLON }
   | '{'     { LB }
   | '}'     { RB }
