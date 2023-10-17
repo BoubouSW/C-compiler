@@ -30,5 +30,5 @@ and monop = |Move
 
 
 
-type def = { typ : const ; name : string ; args : string list ; body : stmt ; }
-and prog = { defs : def list ; }
+type label = { name : string ; body : stmt }
+and prog = { labels : label list ; }
