@@ -22,7 +22,7 @@ and jump =
 
 and binop = |Or |And |Xor |Add |Div |Mul |Sub 
 
-and binopi = |Ori | Andi |Xori |Addi |Subi |Lw |Sw
+and binopi = |Ori | Andi |Xori |Addi |Lw |Sw
 
 and monopi = |Li 
 
