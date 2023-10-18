@@ -36,6 +36,15 @@ rule token = parse
   | ';'     { SEMICOLON }
   | '{'     { LB }
   | '}'     { RB }
+  | '!'     { NOT }
+  | '<''='  { LEQ }
+  | '>''='  { GEQ }
+  | '<'     { LE }
+  | '>'     { GE }
+  | '!''='  { NEQ }
+  | '=''='  { EQQ }
+  | '&''&'  { AND }
+  | '|''|'  { OR }
   | integer as s { CST (int_of_string s) }
   | eof     { EOF }
   | '\r'    { newline lexbuf; token lexbuf }

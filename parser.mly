@@ -7,6 +7,8 @@
 %token <int> CST
 %token <string> IDENT
 %token INT VOID RETURN PRINTINT
+%token AND OR NOT
+%token LEQ GEQ LE GE EQQ NEQ
 %token EOF 
 %token LP RP LB RB
 %token PLUS MINUS TIMES DIV MOD
@@ -16,9 +18,13 @@
 /* def priorites */
 
 (*%right EQ*)
+%left OR
+%left AND
+%left EQQ NEQ
+%left LEQ GEQ LE GE
 %left PLUS MINUS 
 %left TIMES DIV MOD
-(*%nonassoc uminus*)
+%nonassoc uminus not
 
 %start file
 
@@ -57,6 +63,8 @@ const:
 
 expr:
   | c = const { Const c }
+  | NOT e = expr %prec not { Not(e) }
+  | MINUS e = expr %prec uminus { Minus(e) } 
   | e1 = expr o = op e2 = expr { Op (o, e1, e2) }
   | LP e = expr RP { e }
 ;
@@ -67,4 +75,12 @@ expr:
   | TIMES { Mul }
   | DIV   { Div }
   | MOD   { Mod }
+  | LEQ   { Leq }
+  | GEQ   { Geq }
+  | GE    { Ge  }
+  | LE    { Le  }
+  | NEQ   { Neq }
+  | EQQ   { Eq  }
+  | AND   { And }
+  | OR    { Or  }
 ;

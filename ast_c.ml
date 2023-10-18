@@ -12,6 +12,8 @@ and args_fun =
 
 and expr =
   | Const of const
+  | Minus of expr
+  | Not of expr
   | Op of binop * expr * expr
   | Ecall of string * expr list
 
@@ -19,7 +21,7 @@ and const =
   | Inti of int
   | Null
 
-and binop = Add | Sub | Mul | Div | Mod
+and binop = Add | Sub | Mul | Div | Mod | Leq | Le | Geq | Ge | Neq | Eq | And | Or
 
 and types =
   |Int
