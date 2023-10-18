@@ -16,13 +16,15 @@ let read_file ifile =
 
   try
     (*On transforme le buffer en arbre de tokens*)
-    let _ = Parser.file Lexer.token buffer in
+    let _parsed = Parser.file Lexer.token buffer in
 
     (*On ferme le fichier*)
     close_in file;
 
     (*On compile le résultat du parser*)
-    (*Compiler.compile parsed*)
+    (*let mips = C_to_mips.converti parsed
+    Compiler.compile mips*)
+  
   with
     | Lexer.Lexing_error c -> 
       (* Erreur lexicale. On r�cup�re sa position absolue et 
