@@ -1,4 +1,4 @@
-Open Ast_mips
+open Ast_mips
 
 let string_register = function
   | Zero->"$zero"
@@ -35,7 +35,8 @@ let string_binopi = function
   | Andi -> "andi"
   | Xori -> "xori"
   | Ori-> "ori"
-  | Lw-> "lw"
+  | Lw-> "lw"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
+
   | SW-> "sw"
 
 let string_monopi= function 
