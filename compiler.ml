@@ -21,10 +21,10 @@ let string_register = function
   | Pc -> "$sp"
          
 let string_binop = function
-  | Add -> "add"
-  | Sub -> "sub"
-  | Mul -> "mul"
-  | Div -> "div"
+  | Addm -> "add"
+  | Subm -> "sub"
+  | Mulm -> "mul"
+  | Divm -> "div"
   | And -> "and"
   | Xor -> "xor"
   | Or-> "or"
@@ -43,9 +43,12 @@ let string_monop= function
   |Move->"move"
 
 let rec string_stmt= function
-|Sblock(l)->List.fold_left (fun x y-> x^y) (List.map string_stmt l)
-|Sbinopi(op,r1,r2,i)->"\t"^string_binopi op^"\t"^string_register r1^","^string_register r2^","^int_of_string i^"\n"
-|Sbinop(op,r1,r2,r3)->"\t"^string_binopi op^"\t"^string_register r1^","^string_register r2^","^int_of_string i^"\n"
+|Sblockm(l)->List.fold_left (fun x y-> x^y) (List.map string_stmt l)
+|Sbinopi(op,r1,r2,i)->match op with
+  |Sw|Lw->"\t"^string_binopi op^"\t"^string_register r1^","^string_register r2^","^int_of_string i^"\n"
+  |_->"\t"^string_binopi op^"\t"^string_register r1^","^string_register r2^","^int_of_string i^"\n"
+|Sbinop(op,r1,r2,r3)->"\t"^string_binop op^"\t"^string_register r1^","^string_register r2^","^string_register r3^"\n"
+|Smonopi
 
 
 
