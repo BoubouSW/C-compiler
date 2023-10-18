@@ -38,4 +38,5 @@ rule token = parse
   | '}'     { RB }
   | integer as s { CST (int_of_string s) }
   | eof     { EOF }
+  | '\r'    { newline lexbuf; token lexbuf }
   | _ as c  { raise (Lexing_error c) }
