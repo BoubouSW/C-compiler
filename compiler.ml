@@ -1,3 +1,5 @@
+Open Ast_mips
+
 let string_register = function
   | Zero->"$zero"
   | At->"$at"
@@ -43,48 +45,27 @@ let string_monop= function
   |Move->"move"
 
 let rec string_stmt= function
-|Sblockm(l)->List.fold_left (fun x y-> x^y) (List.map string_stmt l)
-|Sbinopi(op,r1,r2,i)->match op with
-  |Sw|Lw->"\t"^string_binopi op^"\t"^string_register r1^","^string_register r2^","^int_of_string i^"\n"
-  |_->"\t"^string_binopi op^"\t"^string_register r1^","^string_register r2^","^int_of_string i^"\n"
+|Sbinopi(op,r1,r2,Intm(i))->(match op with
+  |Sw|Lw->"\t"^string_binopi op^"\t"^string_register r1^","string_of_int i^"("^string_registre r2^")\n"
+  |_->"\t"^string_binopi op^"\t"^string_register r1^","^string_register r2^","^string_of_int i^"\n"
+)
 |Sbinop(op,r1,r2,r3)->"\t"^string_binop op^"\t"^string_register r1^","^string_register r2^","^string_register r3^"\n"
-|Smonopi
+|Smonopi(op,r1,Int(i))->"\t"^string_monopi op^"\t"^string_register r1^","^string_of_int i^"\n"
+|Smonop(op,r1,r2)->"\t"^string_monopi op^"\t"^string_register r1^","^string_register r2^"\n"
+|Ssyscall->"\tsyscall\n"
+|Sjump(j)->(match j with
+  |J(lab)->"\tj\t"^lab^"\n"
+  |Jal(lab)->"\tjal\t"^lab^"\n"
+  |Jr(r1)->"\tjr\t"^string_register r1^"\n")
+|Slabel(lab)->lab^":\n"
 
 
-
-
-let string_instruction = function
-  | Move (dst, src) -> 
-      "\tmove\t"^(string_register dst)^", "^(string_register src)
-  | Li (r, i) ->
-     "\tli\t"^(string_register r)^", "^(string_of_int i)
-  | Lw (r, a) ->
-    "\tlw\t"^(string_register r)^","^(string_address a)
-  | Sw (r, a) ->
-     "\tsw\t"^(string_register r)^","^(string_address a)
-  | Arith (op, dst, src, src2) ->
-     "\t"^(string_arith op)^"\t"^(string_register dst)^","^(string_register src)^","^(string_register src2)
-  | Arithi (op, dst, src, src2) ->
-     "\t"^(string_arith op)^"\t"^(string_register dst)^","^(string_register src)^","^(string_of_int src2)
-  | Jal s -> "\tjal\t"^s
-  | J s -> "\tj\t"^s
-  | Jr r -> "\tjr\t"^(string_register r)
-  | Syscall -> "\tsyscall"
-  | Comment s ->  "\t "^s
-  | Label s ->  s^":"
-
-let string_data = function
-  | Asciiz (l, s) -> 
-      l^":\t.asciiz '"^(String.escaped s)^"'"
-  | Word (l, n) ->
-     l^": \t.word "^(string_of_int n)
 let print_program p out_filename =
   let out_file = open_out out_filename in
   let add s =
-     Printf.fprintf out_file "%s\n" s;
+     Printf.fprintf out_file "%s" s;
   in
   add "\t.text";
-  List.iter (fun e -> string_instruction e |> add ) p.text  ;
+  List.iter (fun e -> string_stmt e |> add ) ;
   add "\t.data";
-  List.iter (fun e -> string_data e |> add ) p.data ;
   close_out out_file
