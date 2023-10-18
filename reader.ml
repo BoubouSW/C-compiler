@@ -35,7 +35,7 @@ let read_file ifile =
       (* Erreur syntaxique. On r�cup�re sa position absolue et on la 
         convertit en num�ro de ligne *)
       localisation (Lexing.lexeme_start_p buffer) ifile;
-      eprintf "Erreur dans l'analyse syntaxique: %c@." c;
+      eprintf "Erreur dans l'analyse syntaxique.\n";
       exit 1
     | _ ->
       localisation (Lexing.lexeme_start_p buffer) ifile;

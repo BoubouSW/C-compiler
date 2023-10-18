@@ -52,6 +52,7 @@ suite:
 ;
  
 stmt:
+  | e = expr SEMICOLON { Sval(e) }
   | PRINTINT LP e = expr RP SEMICOLON { Sprintint e }
   | RETURN e = expr SEMICOLON { Sreturn e }
   | typ = types nom = IDENT SEMICOLON { Svar(typ,nom) }
@@ -66,6 +67,7 @@ expr:
   | NOT e = expr %prec not { Not(e) }
   | MINUS e = expr %prec uminus { Minus(e) } 
   | e1 = expr o = op e2 = expr { Op (o, e1, e2) }
+  | nom = IDENT LP args = separated_list(COMMA,expr) RP { Ecall(nom,args) }
   | LP e = expr RP { e }
 ;
 
