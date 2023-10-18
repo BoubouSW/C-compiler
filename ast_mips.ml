@@ -1,12 +1,12 @@
 (* Syntaxe abstraite pour le langage MIPS *)
 
 type stmt =
-  | Sblockm of stmt list
   | Sbinopi of binopi*registre*registre*expr
   | Sbinop of binop*registre*registre*registre 
   | Smonopi of monopi*registre*expr
   | Smonop of monop*registre*registre
   | Sjump of jump
+  | Slabel of string
   | Ssyscall
 
 and expr =
@@ -28,7 +28,4 @@ and monopi = |Li
 
 and monop = |Move |Smf |Divm
 
-
-
-type label = { name : string ; body : stmt }
-and prog = { labels : label list ; }
+and prog = {stmt list}
