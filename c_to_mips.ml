@@ -18,9 +18,8 @@ let associe_binop b = match binop with
       Sbinopi(Ast_mips.Addi,Ast_mips.)Ast_mips.Sbinop(associe_binop b)]
     |
 
-  and eval_expr e = match e with
+    and eval_expr e = match e with
     |
-
 
      and eval_stmt stmt = match stmt with
     |Sblock(l) -> List.fold_right (fun e instr -> fusionne (eval_expr stmt) instr) l []
