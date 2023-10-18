@@ -6,10 +6,8 @@ let string_register = function
   | A(i)-> "$a"^(string_of_int i )
   | V0 -> "$v0"
   | V1 -> "$v1"
-  | RA -> "$ra"
-  | SP -> "$sp"
-  | FP -> "$fp"
-  | GP -> "$gp"
+  | Fp -> "$fp"
+  | Gp -> "$gp"
   | T i -> "$t"^(string_of_int i )
   | S i -> "$t"^(string_of_int i )
   | K0  ->"$k0"
