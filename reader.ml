@@ -1,6 +1,5 @@
 open Format
 open Lexing
-open Ast_mips
 
 (* localise une erreur en indiquant la ligne et la colonne *)
 let localisation pos ifile =
@@ -16,7 +15,7 @@ let read_file ifile =
 
   try
     (*On transforme le buffer en arbre de tokens*)
-    let _parsed = Parser.file Lexer.token buffer in
+    let parsed = Parser.file Lexer.token buffer in
 
     (*On ferme le fichier*)
     close_in file;

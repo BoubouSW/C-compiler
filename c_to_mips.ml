@@ -26,17 +26,23 @@ let associe_binop op = match op with
     |Mod,_,_ -> (eval_expr e1)@[Sbinopi(Sw,A(0),Sp,Intm(0));
     Sbinopi(Addi,Sp,Sp,Intm(4))]@(eval_expr e2)@[Sbinopi(Addi,Sp,A(0),Intm(-4));
     Sbinopi(Lw,T(0),Sp,Intm(0));Smonop(Divm,A(0),T(0));Smonop(Smf,A(0),Lo)]
+    |_ -> []
 
     and eval_expr e = match e with
     |Const(Inti(i)) -> [Smonopi(Li,A(0),Intm(i))]
     |Op(b,e1,e2) -> eval_binop b e1 e2;
     |Ecall(f,_) -> [Sjump(Jal(f))]
     |Const(Null) -> []
+    |_ -> []
 
     and eval_stmt stmt = match stmt with
     |Sblock(l) -> List.fold_left (fun instr s-> instr@(eval_stmt s)) [] l
     |Sval(e) -> eval_expr e;
     |Sprintint(e) -> (eval_expr e) @ [Smonopi(Li,V0,Intm(1));Ssyscall]
-    |Sreturn(e) -> (eval_expr e)@[Sjump(Jr(Ra))] in 
+    |Sreturn(e) -> (eval_expr e)@[Sjump(Jr(Ra))] 
+    |_ -> []
+  in 
 
     List.fold_left (fun instr fonction -> instr@[Slabel(fonction.name)]@(eval_stmt fonction.body)) [] program.defs
+
+    

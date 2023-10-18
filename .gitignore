@@ -80,3 +80,6 @@ setup.log
 
 # Local OPAM switch
 _opam/
+
+# Fichiers de sortie
+*.s
