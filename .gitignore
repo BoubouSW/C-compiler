@@ -83,3 +83,5 @@ _opam/
 
 # Fichiers de sortie
 *.s
+
+.vscode/
