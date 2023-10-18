@@ -22,8 +22,7 @@ let read_file ifile =
 
     (*On compile le résultat du parser*)
     let mips = C_to_mips.converti parsed in
-    (*let mips = [Smonopi(Li,V0,Intm(2)) ; Ssyscall] in*)
-    Compiler.print_program mips "out.s"
+    Compiler.print_program mips (ifile ^ ".s")
   
   with
     | Lexer.Lexing_error c -> 
@@ -36,7 +35,7 @@ let read_file ifile =
       (* Erreur syntaxique. On r�cup�re sa position absolue et on la 
         convertit en num�ro de ligne *)
       localisation (Lexing.lexeme_start_p buffer) ifile;
-      eprintf "Erreur dans l'analyse syntaxique@.";
+      eprintf "Erreur dans l'analyse syntaxique: %c@." c;
       exit 1
     | _ ->
       localisation (Lexing.lexeme_start_p buffer) ifile;
