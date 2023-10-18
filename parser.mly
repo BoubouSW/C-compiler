@@ -35,7 +35,7 @@ types:
   | VOID { Void }
 
 type_args_fun:
-  | types i = IDENT { i }
+  | typ = types ; i = IDENT { Args(typ,i) }
 
 def: tip = types ; nom = IDENT ; LP ; args = separated_list(COMMA,type_args_fun) ; RP ; bod =  suite 
   {{typ = tip ; name = nom ; args = args ; body = bod }}
@@ -48,6 +48,7 @@ suite:
 stmt:
   | PRINTINT LP e = expr RP SEMICOLON { Sprintint e }
   | RETURN e = expr SEMICOLON { Sreturn e }
+  | typ = types nom = IDENT SEMICOLON { Svar(typ,nom) }
 ;
 
 const:

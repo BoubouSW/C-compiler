@@ -5,6 +5,10 @@ type stmt =
   | Sblock of stmt list
   | Sprintint of expr
   | Sreturn of expr
+  | Svar of types*string
+
+and args_fun =
+  | Args of types*string
 
 and expr =
   | Const of const
@@ -21,5 +25,5 @@ and types =
   |Int
   |Void
 
-type def = { typ : types ; name : string ; args : string list ; body : stmt ; }
+type def = { typ : types ; name : string ; args : args_fun list ; body : stmt ; }
 and prog = { defs : def list ; }
