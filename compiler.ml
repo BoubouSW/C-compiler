@@ -66,6 +66,6 @@ let print_program p out_filename =
      Printf.fprintf out_file "%s" s;
   in
   add "\t.text";
-  List.iter (fun e -> string_stmt e |> add ) ;
+  List.iter (fun e -> string_stmt e |> add )p ;
   add "\t.data";
   close_out out_file
