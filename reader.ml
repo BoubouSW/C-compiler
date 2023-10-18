@@ -1,6 +1,6 @@
 open Format
 open Lexing
-
+open Ast_mips
 
 (* localise une erreur en indiquant la ligne et la colonne *)
 let localisation pos ifile =
@@ -22,8 +22,9 @@ let read_file ifile =
     close_in file;
 
     (*On compile le résultat du parser*)
-    (*let mips = C_to_mips.converti parsed
-    Compiler.compile mips*)
+    let mips = C_to_mips.converti parsed in
+    (*let mips = [Smonopi(Li,V0,Intm(2)) ; Ssyscall] in*)
+    Compiler.print_program mips "out.s"
   
   with
     | Lexer.Lexing_error c -> 
