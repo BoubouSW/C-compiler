@@ -3,7 +3,7 @@ open ast_c
 
 
 let rec converti program =
-  let rec eval_expr e = match e with
+  let rec eval_entier e = match e with
     |Const(Inti(n)) -> ast_mips.Int()  
     |Op(ope,e1,e2)
     | _ -> _
