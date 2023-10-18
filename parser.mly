@@ -46,7 +46,7 @@ suite:
 ;
  
 stmt:
-  | PRINTINT e = expr SEMICOLON { Sprintint e }
+  | PRINTINT LP e = expr RP SEMICOLON { Sprintint e }
   | RETURN e = expr SEMICOLON { Sreturn e }
 ;
 

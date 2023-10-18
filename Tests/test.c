@@ -1,4 +1,4 @@
-int main(){
-    print_int(5);
+int main(int n,int d){
+    printint(1);
     return 0;
 }
