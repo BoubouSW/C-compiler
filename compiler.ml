@@ -24,7 +24,6 @@ let string_binop = function
   | Addm -> "add"
   | Subm -> "sub"
   | Mulm -> "mul"
-  | Divm -> "div"
   | And -> "and"
   | Xor -> "xor"
   | Or-> "or"
@@ -42,6 +41,7 @@ let string_monopi= function
 
 let string_monop= function
   |Move->"move"
+  | Divm -> "div"
 
 let rec string_stmt= function
 |Sbinopi(op,r1,r2,Intm(i))->(match op with
