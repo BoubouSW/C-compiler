@@ -8,7 +8,6 @@ type stmt =
   | Smonop of monop*registre*registre
   | Sjump of jump
   | Ssyscall
-  | Smf of registre
 
 and expr =
   | Intm of int
@@ -17,17 +16,17 @@ and registre =
   |Zero |At |V0 |V1 |A of int |T of int |S of int |K0 |K1 |Gp |Sp |Fp |Ra |Hi |Lo |Pc
 
 and jump =
-  | J of expr
-  | J_label of string
+  | J of string
+  | Jr of registre
   | Jal of string
 
-and binop = |Or |And |Xor |Addm |Divm |Mulm |Subm 
+and binop = |Or |And |Xor |Addm |Mulm |Subm 
 
 and binopi = |Ori | Andi |Xori |Addi |Lw |Sw
 
 and monopi = |Li 
 
-and monop = |Move
+and monop = |Move |Smf |Divm
 
 
 
