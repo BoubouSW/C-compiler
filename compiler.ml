@@ -20,7 +20,7 @@ let string_register = function
   | Lo -> "$lo"
   | Pc -> "$sp"
          
-let string_arith = function
+let string_binop = function
   | Add -> "add"
   | Sub -> "sub"
   | Mul -> "mul"
@@ -28,7 +28,7 @@ let string_arith = function
   | And -> "and"
   | Xor -> "xor"
   | Or-> "or"
-let string_arithi = function
+let string_binopi = function
   | Addi -> "addi"
   | Andi -> "andi"
   | Xori -> "xori"
@@ -42,7 +42,11 @@ let string_monopi= function
 let string_monop= function
   |Move->"move"
 
-let
+let rec string_stmt= function
+|Sblock(l)->List.fold_left (fun x y-> x^y) (List.map string_stmt l)
+|Sbinopi(op,r1,r2,i)->"\t"^string_binopi op^"\t"^string_register r1^","^string_register r2^","^int_of_string i^"\n"
+|Sbinop(op,r1,r2,r3)->"\t"^string_binopi op^"\t"^string_register r1^","^string_register r2^","^int_of_string i^"\n"
+
 
 
 
