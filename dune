@@ -4,7 +4,7 @@
  (modules parser))
 (library
   (name reader)
-  (modules lexer parser ast_c ast_mips compiler reader)
+  (modules lexer parser ast_c ast_mips compiler reader c_to_mips)
   (libraries unix)
 )
 (executable

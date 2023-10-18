@@ -28,4 +28,4 @@ and monopi = |Li
 
 and monop = |Move |Smf |Divm
 
-and prog = {stmt list}
+and prog = stmt list
