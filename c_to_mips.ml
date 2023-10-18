@@ -35,14 +35,11 @@ let associe_binop op = match op with
     |Const(Null) -> []
     |_ -> []
 
-    and eval_stmt stmt = match stmt with
-    |Sblock(l) -> List.fold_left (fun instr s-> instr@(eval_stmt s)) [] l
+    and eval_stmt ?(main=false) stmt = match stmt with
+    |Sblock(l) -> List.fold_left (fun instr s-> instr@(eval_stmt ~main:false s)) [] l
     |Sval(e) -> eval_expr e;
     |Sprintint(e) -> (eval_expr e) @ [Smonopi(Li,V0,Intm(1));Ssyscall]
-    |Sreturn(e) -> (eval_expr e)@[Sjump(Jr(Ra))] 
-    |_ -> []
-  in 
+    |Sreturn(e) when main = true -> (eval_expr e)@[Smonopi(Li,V0,Intm(10));Ssyscall]
+    |Sreturn(e) -> (eval_expr e)@[Sjump(Jr(Ra))] in 
 
-    List.fold_left (fun instr fonction -> instr@[Slabel(fonction.name)]@(eval_stmt fonction.body)) [] program.defs
-
-    
+    List.fold_left (fun instr fonction -> instr@[Slabel(fonction.name)]@(eval_stmt ~main:(fonction.name="main") fonction.body)) [] program.defs
