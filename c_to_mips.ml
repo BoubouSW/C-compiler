@@ -39,9 +39,9 @@ let converti program = (*On stocke le resultat dans a*)
       [Sbinopi(Addi,Sp,Sp,Intm(-4*off_set))]@assigne_les_variables@[Sjump(Jal(f));Sbinopi(Addi,Sp,Sp,Intm(4*off_set))]
     |Const(Null) -> []
     |Var(s) -> 
-      (try 
-        [Sbinopi(Lw,A(0),Sp,-4*(Hashtbl.find variables s))] 
-      with Not_found -> print_string ("variable "^s^" non definie\n");
+      (match Hashtbl.find_opt variables s with
+        |Some(Intm(n)) -> [Sbinopi(Lw,A(0),Sp,Intm(-4*n))] 
+        |_ -> print_string ("variable "^s^" non definie\n");
     failwith "undefined")
     |_ -> print_string "Pas codee eval_expr";failwith "Pascodee "
 
