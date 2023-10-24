@@ -7,12 +7,12 @@
 %token <int> CST
 %token <string> IDENT
 %token INT VOID RETURN PRINTINT
-%token AND OR NOT
+%token AND OR NOT IF ELSE
 %token LEQ GEQ LE GE EQQ NEQ
 %token EOF 
 %token LP RP LB RB
 %token PLUS MINUS TIMES DIV MOD
-(*%token EQ*)
+%token EQ
 %token COMMA SEMICOLON
 
 /* def priorites */
@@ -56,6 +56,11 @@ stmt:
   | PRINTINT LP e = expr RP SEMICOLON { Sprintint e }
   | RETURN e = expr SEMICOLON { Sreturn e }
   | typ = types nom = IDENT SEMICOLON { Svar(typ,nom) }
+  | s = IDENT EQ e = expr SEMICOLON { Sassign(s,e) }
+  | typ = types nom = IDENT EQ e = expr SEMICOLON { Sblock([Svar(typ,nom);Sassign(nom,e)]) }
+  | IF LP e=expr RP b=suite { Sif(e,b,Sblock([])) }
+  | IF LP e=expr RP b1=suite ELSE b2=suite { Sif(e,b1,b2) }
+
 ;
 
 const:

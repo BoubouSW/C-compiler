@@ -6,6 +6,8 @@ type stmt =
   | Sprintint of expr
   | Sreturn of expr
   | Svar of types*string
+  | Sassign of string*expr
+  | Sif of expr*stmt*stmt
 
 and args_fun =
   | Args of types*string

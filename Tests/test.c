@@ -1,10 +1,8 @@
-int test(int x) {
-    printint(5);
-    return 0;
+int test() {
+    if (1) {return 1;}
+    return 1;
 }
 
 int main() {
-    test(5);
-    1+1;
     return 0;
 }
