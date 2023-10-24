@@ -38,6 +38,11 @@ let converti program = (*On stocke le resultat dans a*)
           (eval_expr arg (off_set+i+1))@[Sbinopi(Sw,A(0),Sp,Intm(-4*(off_set+i+1)))]) l) in
       [Sbinopi(Addi,Sp,Sp,Intm(-4*off_set))]@assigne_les_variables@[Sjump(Jal(f));Sbinopi(Addi,Sp,Sp,Intm(4*off_set))]
     |Const(Null) -> []
+    |Var(s) -> 
+      (try 
+        [Sbinopi(Lw,A(0),Sp,Hashtbl.find variables s)] 
+      with Not_found -> print_string ("variable "^s^" non definie\n");
+    failwith "undefined")
     |_ -> failwith "Pascodee "
 
     and eval_stmt ?(main=false) stmt off_set = match stmt with
@@ -46,11 +51,6 @@ let converti program = (*On stocke le resultat dans a*)
     |Sprintint(e) -> (eval_expr e off_set) @ [Smonopi(Li,V0,Intm(1));Ssyscall]
     |Sreturn(e) when main = true -> (eval_expr e off_set)@[Smonopi(Li,V0,Intm(10));Ssyscall]
     |Sreturn(e) -> (eval_expr e off_set)@[Sbinopi(Lw,Ra,Sp,Intm(0));Sjump(Jr(Ra))]
-    |Svar(_,s) -> 
-      (try 
-        [Sbinopi(Lw,A(0),Sp,Hashtbl.find variables s)] 
-      with Not_found -> print_string ("variable "^s^" non definie\n");
-        failwith "undefined")
     |_ -> failwith "Pascodee "
 
   in 
