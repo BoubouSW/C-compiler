@@ -40,7 +40,7 @@ let converti program = (*On stocke le resultat dans a*)
     |Const(Null) -> []
     |Var(s) -> 
       (try 
-        [Sbinopi(Lw,A(0),Sp,Hashtbl.find variables s)] 
+        [Sbinopi(Lw,A(0),Sp,-4*(Hashtbl.find variables s))] 
       with Not_found -> print_string ("variable "^s^" non definie\n");
     failwith "undefined")
     |_ -> print_string "Pas codee eval_expr";failwith "Pascodee "
