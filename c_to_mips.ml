@@ -1,6 +1,8 @@
 open Ast_c
 open Ast_mips
 
+let variables  = Hashtbl.create 100;
+
 let associe_binop op = match op with
   |Mul -> Mulm
   |Sub -> Subm
@@ -30,7 +32,11 @@ let converti program = (*On stocke le resultat dans a*)
     |Minus(expr) -> eval_binop Sub (Const(Inti 0)) expr off_set
     |Const(Inti(i)) -> [Smonopi(Li,A(0),Intm(i))]
     |Op(b,e1,e2) -> eval_binop b e1 e2 off_set
-    |Ecall(f,[]) -> [Sbinopi(Addi,Sp,Sp,Intm(-4*off_set));Sjump(Jal(f));Sbinopi(Addi,Sp,Sp,Intm(4*off_set))]
+    |Ecall(f,l) -> 
+      let assigne_les_variables = List.iteri 
+        (fun i arg ->
+          (eval_expr arg)@[Sbinopi(Sw,A(0),Sp,Intm(-4*(off_set+i+1)))]) l;
+      [Sbinopi(Addi,Sp,Sp,Intm(-4*off_set))]@@[Sjump(Jal(f));Sbinopi(Addi,Sp,Sp,Intm(4*off_set))]
     |Const(Null) -> []
     |_ -> failwith "Pascodee "
 
@@ -39,13 +45,20 @@ let converti program = (*On stocke le resultat dans a*)
     |Sval(e) -> eval_expr e off_set
     |Sprintint(e) -> (eval_expr e off_set) @ [Smonopi(Li,V0,Intm(1));Ssyscall]
     |Sreturn(e) when main = true -> (eval_expr e off_set)@[Smonopi(Li,V0,Intm(10));Ssyscall]
-    |Sreturn(e) -> (eval_expr e off_set)@[] 
+    |Sreturn(e) -> (eval_expr e off_set)@[Sbinopi(Lw,Ra,Sp,Intm(0));Sjump(Jr(Ra))]
+    |Svar(_,s) -> 
+      (try 
+        [Binopi(Lw,A(0),Sp,Hashtbl.find s)] 
+      with Not_found -> print_string "variable "^s^" non definie ";
+        failwith "undefined")
     |_ -> failwith "Pascodee "
-  
+
   in 
     List.fold_left 
-    (fun instr fonction -> 
+    (fun instr fonction ->
+      List.iteri (fun i arg -> Hashtbl.add arg (i+1));
+      let evalue_la_fonction =eval_stmt ~main:(fonction.name="main") fonction.body (1+(List.length fonction.args)) in
+      List.iter (fun arg -> Hashtbl.remove arg);
       instr@[Slabel(fonction.name);Sbinopi(Sw,Ra,Sp,Intm(0))]
-      @(eval_stmt ~main:(fonction.name="main") fonction.body 1)
-      @[Sbinopi(Lw,Ra,Sp,Intm(0));Sjump(Jr(Ra))])
+      @evalue_la_fonction)
     [] program.defs
