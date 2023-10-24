@@ -69,6 +69,7 @@ const:
 
 expr:
   | c = const { Const c }
+  | i = IDENT { Var(i) }
   | NOT e = expr %prec not { Not(e) }
   | MINUS e = expr %prec uminus { Minus(e) } 
   | e1 = expr o = op e2 = expr { Op (o, e1, e2) }

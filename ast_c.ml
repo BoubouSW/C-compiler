@@ -14,6 +14,7 @@ and args_fun =
 
 and expr =
   | Const of const
+  | Var of string
   | Minus of expr
   | Not of expr
   | Op of binop * expr * expr
