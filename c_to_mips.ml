@@ -7,7 +7,7 @@ let associe_binop op = match op with
   |Mul -> Mulm
   |Sub -> Subm
   |Add -> Addm
-  | _ -> failwith "Pas un binop"
+  | _ -> print_string "Pas codee associe_binop";failwith "Pas un binop"
 
 let converti program = (*On stocke le resultat dans a*)
   
@@ -26,7 +26,7 @@ let converti program = (*On stocke le resultat dans a*)
     |Mod,_,_ -> (eval_expr e1 off_set)@[Sbinopi(Sw,A(0),Sp,Intm(-4*off_set))]@
     (eval_expr e2 (off_set+1))@[Sbinopi(Lw,T(0),Sp,Intm(-4*off_set));Smonop(Divm,A(0),T(0));Smonop(Smf,A(0),Lo)]
 
-    |_ -> failwith "Pascodee "
+    |_ -> print_string "Pas codee eval_binop"; failwith "Pascodee "
 
     and eval_expr e off_set = match e with
     |Minus(expr) -> eval_binop Sub (Const(Inti 0)) expr off_set
@@ -43,7 +43,7 @@ let converti program = (*On stocke le resultat dans a*)
         [Sbinopi(Lw,A(0),Sp,Hashtbl.find variables s)] 
       with Not_found -> print_string ("variable "^s^" non definie\n");
     failwith "undefined")
-    |_ -> failwith "Pascodee "
+    |_ -> print_string "Pas codee eval_expr";failwith "Pascodee "
 
     and eval_stmt ?(main=false) stmt off_set = match stmt with
     |Sblock(l) -> List.fold_left (fun instr s-> instr@(eval_stmt ~main:false s off_set)) [] l
@@ -51,7 +51,7 @@ let converti program = (*On stocke le resultat dans a*)
     |Sprintint(e) -> (eval_expr e off_set) @ [Smonopi(Li,V0,Intm(1));Ssyscall]
     |Sreturn(e) when main = true -> (eval_expr e off_set)@[Smonopi(Li,V0,Intm(10));Ssyscall]
     |Sreturn(e) -> (eval_expr e off_set)@[Sbinopi(Lw,Ra,Sp,Intm(0));Sjump(Jr(Ra))]
-    |_ -> failwith "Pascodee "
+    |_ -> print_string "Pas codee eval_stmt"; failwith "Pascodee "
 
   in 
     List.fold_left 
