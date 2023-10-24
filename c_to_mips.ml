@@ -1,7 +1,7 @@
 open Ast_c
 open Ast_mips
 
-let variables  = Hashtbl.create 100;
+let variables  = Hashtbl.create 100
 
 let associe_binop op = match op with
   |Mul -> Mulm
@@ -33,10 +33,10 @@ let converti program = (*On stocke le resultat dans a*)
     |Const(Inti(i)) -> [Smonopi(Li,A(0),Intm(i))]
     |Op(b,e1,e2) -> eval_binop b e1 e2 off_set
     |Ecall(f,l) -> 
-      let assigne_les_variables = List.iteri 
+      let assigne_les_variables = List.concat (List.mapi 
         (fun i arg ->
-          (eval_expr arg)@[Sbinopi(Sw,A(0),Sp,Intm(-4*(off_set+i+1)))]) l;
-      [Sbinopi(Addi,Sp,Sp,Intm(-4*off_set))]@@[Sjump(Jal(f));Sbinopi(Addi,Sp,Sp,Intm(4*off_set))]
+          (eval_expr arg (off_set+i+1))@[Sbinopi(Sw,A(0),Sp,Intm(-4*(off_set+i+1)))]) l) in
+      [Sbinopi(Addi,Sp,Sp,Intm(-4*off_set))]@assigne_les_variables@[Sjump(Jal(f));Sbinopi(Addi,Sp,Sp,Intm(4*off_set))]
     |Const(Null) -> []
     |_ -> failwith "Pascodee "
 
@@ -48,17 +48,17 @@ let converti program = (*On stocke le resultat dans a*)
     |Sreturn(e) -> (eval_expr e off_set)@[Sbinopi(Lw,Ra,Sp,Intm(0));Sjump(Jr(Ra))]
     |Svar(_,s) -> 
       (try 
-        [Binopi(Lw,A(0),Sp,Hashtbl.find s)] 
-      with Not_found -> print_string "variable "^s^" non definie ";
+        [Sbinopi(Lw,A(0),Sp,Hashtbl.find variables s)] 
+      with Not_found -> print_string ("variable "^s^" non definie\n");
         failwith "undefined")
     |_ -> failwith "Pascodee "
 
   in 
     List.fold_left 
     (fun instr fonction ->
-      List.iteri (fun i arg -> Hashtbl.add arg (i+1));
+      List.iteri (fun i (Args(_,arg)) -> Hashtbl.add variables arg (Intm(i+1))) fonction.args;
       let evalue_la_fonction =eval_stmt ~main:(fonction.name="main") fonction.body (1+(List.length fonction.args)) in
-      List.iter (fun arg -> Hashtbl.remove arg);
+      List.iter (fun (Args(_,arg)) -> Hashtbl.remove variables arg) fonction.args;
       instr@[Slabel(fonction.name);Sbinopi(Sw,Ra,Sp,Intm(0))]
       @evalue_la_fonction)
     [] program.defs
