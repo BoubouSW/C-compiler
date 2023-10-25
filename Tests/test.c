@@ -1,13 +1,11 @@
-int test(int x) {
-    int y = 5;
-    while (y) {
-        printint(y);
-        y = y - 1;
+int fact(int n) {
+    if (n) { 
+        return n*fact(n-1); 
     }
-    return 20; //ici la printint if if else
+    else { return n+1; }
 }
 
 int main() {
-    printint(test(1));
+    printint(fact(12));
     return 0;
 }

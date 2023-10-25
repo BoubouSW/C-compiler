@@ -47,6 +47,7 @@ rule token = parse
   | '=''='  { EQQ }
   | '&''&'  { AND }
   | '|''|'  { OR }
+  | '&'     { ESP }
   | integer as s { CST (int_of_string s) }
   | eof     { EOF }
   | '\r'    { newline lexbuf; token lexbuf }
