@@ -21,7 +21,7 @@ let converti program = (*On stocke le resultat des instructions dans A(0)*)
     (*On separe les cas ou on additionne une constante*)
     |Add,Const(Inti(i)),e | Add,e,Const(Inti(i)) 
      -> (eval_expr e off_set var_locales)@[Sbinopi(Addi,A(0),A(0),Intm(i))]
-     de fusion dans c_to_mips.
+     
     |Sub,e,Const(Inti (i)) -> (eval_expr e off_set var_locales)@[Sbinopi(Addi,A(0),A(0),Intm(-i))]
 
     |Mul,_,_|Sub,_,_|Add,_,_ -> (eval_expr e1 off_set var_locales)
@@ -109,7 +109,7 @@ let converti program = (*On stocke le resultat des instructions dans A(0)*)
       let then_label = fresh_label "then" in
       let else_label = fresh_label "else" in
       let endif_label = fresh_label "endif" in
-      (**)
+      (*EVALUATION*)
       cond_eval @
       (*On teste si A0 = 0 *)
       [Scond(Beq,A(0),Zero,else_label)] @
