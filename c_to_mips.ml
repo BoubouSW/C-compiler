@@ -9,7 +9,10 @@ let associe_binop op = match op with
   |Add -> Addm
   | _ -> print_string "Pas codee associe_binop";failwith "Pas un binop"
 
-let eval_comparaison = 
+let init_cpt = let cpt = ref 0 in cpt
+let fresh_label (str:string) =
+  init_cpt := !init_cpt + 1;
+  str^"_"^(string_of_int (!init_cpt))
 
 let converti program = (*On stocke le resultat des instructions dans A(0)*)
   
@@ -18,7 +21,7 @@ let converti program = (*On stocke le resultat des instructions dans A(0)*)
     (*On separe les cas ou on additionne une constante*)
     |Add,Const(Inti(i)),e | Add,e,Const(Inti(i)) 
      -> (eval_expr e off_set var_locales)@[Sbinopi(Addi,A(0),A(0),Intm(i))]
-    
+     de fusion dans c_to_mips.
     |Sub,e,Const(Inti (i)) -> (eval_expr e off_set var_locales)@[Sbinopi(Addi,A(0),A(0),Intm(-i))]
 
     |Mul,_,_|Sub,_,_|Add,_,_ -> (eval_expr e1 off_set var_locales)
@@ -99,7 +102,25 @@ let converti program = (*On stocke le resultat des instructions dans A(0)*)
 
     |Sreturn(e) -> (eval_expr e (off_set+ !off_set_local) var_locales)@[Sbinopi(Lw,Ra,Sp,Intm(0));Sjump(Jr(Ra))]
 
-    |_ -> print_string "Pas codee eval_stmt"; failwith "Pascodee "
+    |Sif(cond,stmt_if,stmt_else) -> (
+      let cond_eval = eval_expr cond off_set var_locales in
+      let eval_if = eval_stmt ~main:main var_locales stmt_if off_set in
+      let eval_else = eval_stmt ~main:main var_locales stmt_else off_set in
+      let then_label = fresh_label "then" in
+      let else_label = fresh_label "else" in
+      let endif_label = fresh_label "endif" in
+      (**)
+      cond_eval @
+      (*On teste si A0 = 0 *)
+      [Scond(Beq,A(0),Zero,else_label)] @
+      (*Si la condition est vérifiée*)
+      [Slabel(then_label)] @ eval_if @ [Sjump(J(endif_label))] @
+      (*Sinon*)
+      [Slabel(else_label)] @ eval_else @
+      (*Sortie du If*)
+      [Slabel(endif_label)])
+
+    (*|_ -> print_string "Pas codee eval_stmt"; failwith "Pascodee "*)
 
   in 
     List.fold_left 

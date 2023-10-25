@@ -1,11 +1,11 @@
 int test(int x) {
-    //test
+    int y = 56;
+    int z;
+    z = 3;
+    printint(z);
     printint(x);
-    /* test ffdsd
-    dsqdjlkjd '
-    effdsgreg printint duHQSDQJSD(-"è_é&çàc ")
-    dfgdfgfd dddd8887 jfqhig int printint if 
-    */
+    printint(z+x);
+    printint(y + 1);
     return 1; //ici la printint if if else
 }
 
