@@ -67,7 +67,7 @@ let converti program = (*On stocke le resultat des instructions dans A(0)*)
         |_ -> print_string ("variable "^s^" non definie\n");
         failwith "undefined")
     |Esper(s)->(match Hashtbl.find_opt var_locales s with
-      |Some(Intm(n)) -> [Smonopi(Li,A(0),Intm(n))] 
+      |Some(Intm(n)) -> [Smonopi(Li,A(0),Intm(n/(-4)))] 
       |_ -> print_string ("variable "^s^" non definie\n");
       failwith "undefined")
 
