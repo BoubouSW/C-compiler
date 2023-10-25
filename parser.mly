@@ -6,7 +6,7 @@
 
 %token <int> CST
 %token <string> IDENT COM BCOM
-%token INT VOID RETURN PRINTINT
+%token INT VOID RETURN PRINTINT WHILE
 %token AND OR NOT IF ELSE
 %token LEQ GEQ LE GE EQQ NEQ
 %token EOF

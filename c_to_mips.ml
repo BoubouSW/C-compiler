@@ -122,15 +122,15 @@ let converti program = (*On stocke le resultat des instructions dans A(0)*)
     
     |Swhile(cond,stmt) -> (
       let cond_eval = eval_expr cond off_set var_locales in
-      let stmt_eval = eval_stmt ~main:main var_locales stmt_if off_set in
+      let stmt_eval = eval_stmt ~main:main var_locales stmt off_set in
       let loop_label = fresh_label "loop" in
       let endloop_label = fresh_label "endloop" in
 
       [Slabel(loop_label)] @ cond_eval @ [Scond(Beq,A(0),Zero,endloop_label)] @
       stmt_eval @
-      [Slabel(endloop_label)]
+      [Sjump(J(loop_label)) ; Slabel(endloop_label)]
     )
-    
+
     (*|_ -> print_string "Pas codee eval_stmt"; failwith "Pascodee "*)
 
   in 

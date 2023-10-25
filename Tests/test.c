@@ -1,8 +1,8 @@
 int test(int x) {
-    if (x) {
-        return 10;
-    } else{
-        return 50;
+    int y = 5;
+    while (y) {
+        printint(y);
+        y = y - 1;
     }
     return 20; //ici la printint if if else
 }
