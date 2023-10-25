@@ -24,8 +24,8 @@ and jump =
   | J of string
   | Jr of registre
   | Jal of string
-
-and binop = |Or |And |Xor |Addm |Mulm |Subm 
+    (* slt a b: si  a < b alors 1 sinon 0*)
+and binop = |Or |And |Xor |Addm |Mulm |Subm |Slt
 
 and binopi = |Ori | Andi |Xori |Addi |Lw |Sw
 
