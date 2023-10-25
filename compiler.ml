@@ -52,7 +52,7 @@ let string_stmt= function
 |Smonop (Smf,r1,r2)->(match r2 with
                       |Hi->"\tmfhi\t"^string_register r1
                       |Lo->"\tmflo\t"^string_register r1
-                      |_->failwith "mf incorrect"
+                      |_->failwith "mf incorrect")
 
 |Smonop(op,r1,r2)->"\t"^string_monop op^"\t"^string_register r1^","^string_register r2^"\n"
 |Ssyscall->"\tsyscall\n"
