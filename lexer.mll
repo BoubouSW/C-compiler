@@ -4,7 +4,7 @@
    
   exception Lexing_error of char
     
-  let kwd_tbl = ["int",INT;"void",VOID;"printint",PRINTINT;"return",RETURN; "if", IF; "else", ELSE; "while", WHILE;]
+  let kwd_tbl = ["int",INT;"void",VOID;"printint",PRINTINT;"return",RETURN; "if", IF; "else", ELSE; "while", WHILE; "for", FOR;]
   let id_or_kwd s = try List.assoc s kwd_tbl with _ -> IDENT s
 
   let newline lexbuf =

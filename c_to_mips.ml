@@ -112,6 +112,7 @@ let converti program = (*On stocke le resultat des instructions dans A(0)*)
       let then_label = fresh_label "then" in
       let else_label = fresh_label "else" in
       let endif_label = fresh_label "endif" in
+      
       (*Evaluation*)
       cond_eval @
       (*On teste si A0 = 0 *)
@@ -132,6 +133,11 @@ let converti program = (*On stocke le resultat des instructions dans A(0)*)
       [Slabel(loop_label)] @ cond_eval @ [Scond(Beq,A(0),Zero,endloop_label)] @
       stmt_eval @
       [Sjump(J(loop_label)) ; Slabel(endloop_label)]
+    )
+
+    |Sfor(def,cond,change,stmt) -> (
+      let _ = def,cond,change,stmt in
+      []
     )
 
     (*|_ -> print_string "Pas codee eval_stmt"; failwith "Pascodee "*)

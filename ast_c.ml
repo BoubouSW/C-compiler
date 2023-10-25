@@ -9,6 +9,7 @@ type stmt =
   | Sassign of string*expr
   | Sif of expr*stmt*stmt
   | Swhile of expr*stmt
+  | Sfor of stmt*expr*stmt*stmt
 
 and args_fun =
   | Args of types*string

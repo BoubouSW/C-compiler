@@ -6,7 +6,8 @@
 
 %token <int> CST
 %token <string> IDENT COM BCOM
-%token INT VOID RETURN PRINTINT WHILE
+%token INT VOID RETURN PRINTINT 
+%token WHILE FOR
 %token AND OR NOT IF ELSE
 %token LEQ GEQ LE GE EQQ NEQ
 %token EOF
@@ -64,6 +65,8 @@ stmt:
   | COM { Sblock([]) }
   | BCOM { Sblock([]) }
   | WHILE LP e=expr RP b = suite {Swhile(e,b)}
+
+  | FOR LP def=stmt SEMICOLON cond=expr SEMICOLON change=stmt RP b=suite {Sfor(def,cond,change,b)} 
 
 ;
 
