@@ -9,7 +9,7 @@ let associe_binop op = match op with
   |Add -> Addm
   | _ -> print_string "Pas codee associe_binop";failwith "Pas un binop"
 
-
+let eval_comparaison = 
 
 let converti program = (*On stocke le resultat des instructions dans A(0)*)
   
@@ -106,7 +106,7 @@ let converti program = (*On stocke le resultat des instructions dans A(0)*)
     (fun instr fonction ->
       (* On ajoute les arguments de la fonction dans le contexte*)
       let variables_locales  = Hashtbl.create 100 in
-      List.iteri (fun i (Args(_,arg)) -> Hashtbl.add variables_locales arg (Intm(4*(i+1)))) fonction.args;
+      List.iteri (fun i (Args(_,arg)) -> Hashtbl.add variables_locales arg (Intm(-4*(i+1)))) fonction.args;
       let corps_de_la_fonction = eval_stmt ~main:(fonction.name="main") variables_locales fonction.body (1+(List.length fonction.args)) in 
       (* L'argument main est à true lorsque la fonction etudiee est main, et donc ajoute a la fin de la fonction un syscall pour exit*)
       (* Les premiers elements de la pile sont occupes par les arguments et ra*)
