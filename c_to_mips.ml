@@ -14,7 +14,7 @@ let fresh_label (str:string) =
   init_cpt := !init_cpt + 1;
   str^"_"^(string_of_int (!init_cpt))
 
-let converti program = (*On stocke le resultat des instructions dans A(0)*)
+   converti program = (*On stocke le resultat des instructions dans A(0)*)
   
   let rec eval_binop op e1 e2 off_set var_locales= match op,e1,e2 with
 
@@ -41,7 +41,60 @@ let converti program = (*On stocke le resultat des instructions dans A(0)*)
 
     |_ -> print_string "Pas codee eval_binop"; failwith "Pascodee "
 
+  and eval_comparaison op e1 e2 off_set var_locales = match op with
+    |Eq -> 
+      (*evaluations des expressions*)
+      (eval_expr e1 off_set var_locales)
+      @[Sbinopi(Sw,A(0),Sp,Intm(-4*off_set))]
+      @(eval_expr e2 (off_set+1) var_locales)
+      @[Sbinopi(Lw,T(0),Sp,Intm(-4*off_set));
 
+      Sbinop(Slt,T(1),T(0),A(0)); (* e1 < e2 *)
+      Sbinop(Slt,A(0),A(0),T(0)); (* e2 < e1*)
+      Sbinop(Addm,A(0),T(1),A(0)); (* A(0) = 0 lorsque les deux conditions sont fausse*)
+      Smonopi(Li,T(0),Intm(1)); Sbinop(Slt,A(0),A(0),T(0))]  (* A(0) < 1 *)
+
+    |Neq ->  (eval_expr e1 off_set var_locales)
+      @[Sbinopi(Sw,A(0),Sp,Intm(-4*off_set))]
+      @(eval_expr e2 (off_set+1) var_locales)
+      @[Sbinopi(Lw,T(0),Sp,Intm(-4*off_set));
+      
+      Sbinop(Subm,A(0),T(0),A(0))]
+    
+    |Leq -> 
+      (eval_expr e1 off_set var_locales)
+      @[Sbinopi(Sw,A(0),Sp,Intm(-4*off_set))]
+      @(eval_expr e2 (off_set+1) var_locales)
+      @[Sbinopi(Lw,T(0),Sp,Intm(-4*off_set));
+
+      Sbinopi(Addi,T(0),T(0),Intm(1)); (* e2' = e2+1*)
+      Sbinop(Slt,A(0),T(0),A(0))] (* e1 < e2' <=> e1 <= e2*)
+    
+    |Le ->     
+      (eval_expr e1 off_set var_locales)
+      @[Sbinopi(Sw,A(0),Sp,Intm(-4*off_set))]
+      @(eval_expr e2 (off_set+1) var_locales)
+      @[Sbinopi(Lw,T(0),Sp,Intm(-4*off_set));
+
+      Sbinop(Slt,A(0),T(0),A(0))] (* e1 < e2*)
+    
+    |Geq -> eval_comparaison Leq e2 e1 off_set var_locales
+    |Ge -> eval_comparaison Le e2 e1 off_set var_locales
+    |Or -> 
+      (eval_expr e1 off_set var_locales)
+      @[Sbinopi(Sw,A(0),Sp,Intm(-4*off_set))]
+      @(eval_expr e2 (off_set+1) var_locales)
+      @[Sbieval_comparaisonnopi(Lw,T(0),Sp,Intm(-4*off_set));
+      
+      Sbinop(Or,A(0),A(0),T(0))]
+
+    |And -> 
+        (eval_expr e1 off_set var_locales)
+        @[Sbinopi(Sw,A(0),Sp,Intm(-4*off_set))]
+        @(eval_expr e2 (off_set+1) var_locales)
+        @[Sbinopi(Lw,T(0),Sp,Intm(-4*off_set));
+        
+        Sbinop(And,A(0),A(0),T(0))]
 
 
     and eval_expr e off_set var_locales = match e with
@@ -61,8 +114,9 @@ let converti program = (*On stocke le resultat des instructions dans A(0)*)
       assigne_les_variables@[Sbinopi(Addi,Sp,Sp,Intm(-4*(off_set)))]@[Sjump(Jal(f));Sbinopi(Addi,Sp,Sp,Intm(4*(off_set)))]
 
     |Const(Null) -> []
-
-    |Var(s) -> (match Hashtbl.find_opt var_locales s with
+    
+    |Var(s) -> 
+      (match Hashtbl.find_opt var_locales s with
         |Some(Intm(n)) -> [Sbinopi(Lw,A(0),Sp,Intm(n))] 
         |_ -> print_string ("variable "^s^" non definie\n");
         failwith "undefined")
