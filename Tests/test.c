@@ -1,5 +1,6 @@
 int fact(int n) {
-    if (n) { 
+    if (n) {
+        &n;
         return n*fact(n-1); 
     }
     else { return n+1; }

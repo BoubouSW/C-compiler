@@ -25,7 +25,7 @@
 %left LEQ GEQ LE GE
 %left PLUS MINUS 
 %left TIMES DIV MOD
-%nonassoc uminus not esp
+%nonassoc uminus not
 
 %start file
 
@@ -78,7 +78,7 @@ expr:
   | MINUS e = expr %prec uminus { Minus(e) } 
   | e1 = expr o = op e2 = expr { Op (o, e1, e2) }
   | nom = IDENT LP args = separated_list(COMMA,expr) RP { Ecall(nom,args) }
-  | ESP nom = IDENT %prec esp { Esp(nom) }
+  | ESP nom = IDENT { Esper(nom) }
   | LP e = expr RP { e }
 ;
 
