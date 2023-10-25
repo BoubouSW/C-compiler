@@ -50,8 +50,8 @@ let string_stmt= function
 |Sbinop(op,r1,r2,r3)->"\t"^string_binop op^"\t"^string_register r1^","^string_register r2^","^string_register r3^"\n"
 |Smonopi(op,r1,Intm(i))->"\t"^string_monopi op^"\t"^string_register r1^","^string_of_int i^"\n"
 |Smonop (Smf,r1,r2)->(match r2 with
-                      |Hi->"\tmfhi\t"^string_register r1
-                      |Lo->"\tmflo\t"^string_register r1
+                      |Hi->"\tmfhi\t"^string_register r1^"\n"
+                      |Lo->"\tmflo\t"^string_register r1^"\n"
                       |_->failwith "mf incorrect")
 
 |Smonop(op,r1,r2)->"\t"^string_monop op^"\t"^string_register r1^","^string_register r2^"\n"
