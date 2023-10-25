@@ -38,9 +38,9 @@ let string_monopi= function
   |Li->"li"
 
 let string_monop= function
-  |Move->"move"
+  | Move->"move"
   | Divm -> "div"
-  | Smf -> ""
+  | Smf -> "mf"
 
 let string_stmt= function
 |Sbinopi(op,r1,r2,Intm(i))->(match op with
