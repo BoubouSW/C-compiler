@@ -62,11 +62,14 @@ let converti program = (*On stocke le resultat des instructions dans A(0)*)
 
     |Const(Null) -> []
 
-    |Var(s) -> 
-      (match Hashtbl.find_opt var_locales s with
+    |Var(s) -> (match Hashtbl.find_opt var_locales s with
         |Some(Intm(n)) -> [Sbinopi(Lw,A(0),Sp,Intm(n))] 
         |_ -> print_string ("variable "^s^" non definie\n");
-    failwith "undefined")
+        failwith "undefined")
+    |Esper(s)->(match Hashtbl.find_opt var_locales s with
+      |Some(Intm(n)) -> [Smonopi(Li,A(0),Intm(n))] 
+      |_ -> print_string ("variable "^s^" non definie\n");
+      failwith "undefined")
 
     |_ -> print_string "Pas codee eval_expr";failwith "Pascodee "
 
