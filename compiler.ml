@@ -31,8 +31,13 @@ let string_binopi = function
   | Xori -> "xori"
   | Ori-> "ori"
   | Lw-> "lw"
-
   | Sw-> "sw"
+
+let string_cond= function
+  |Beq->"beq"
+  |Bne->"bne"
+  |Blt->"blt"
+  |Bge->"bge"
 
 let string_monopi= function 
   |Li->"li"
@@ -61,6 +66,7 @@ let string_stmt= function
   |Jal(lab)->"\tjal\t"^lab^"\n"
   |Jr(r1)->"\tjr\t"^string_register r1^"\n")
 |Slabel(lab)->lab^":\n"
+|Scond(c,r1,r2,lab)->"\t"^string_cond c^"\t"^string_register r1^","^string_register r2^","^lab
 
 
 let print_program p out_filename =
