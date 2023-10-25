@@ -8,6 +8,7 @@ type stmt =
   | Svar of types*string
   | Sassign of string*expr
   | Sif of expr*stmt*stmt
+  | Swhile of expr*stmt
 
 and args_fun =
   | Args of types*string

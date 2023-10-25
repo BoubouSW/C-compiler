@@ -109,7 +109,7 @@ let converti program = (*On stocke le resultat des instructions dans A(0)*)
       let then_label = fresh_label "then" in
       let else_label = fresh_label "else" in
       let endif_label = fresh_label "endif" in
-      (*EVALUATION*)
+      (*Evaluation*)
       cond_eval @
       (*On teste si A0 = 0 *)
       [Scond(Beq,A(0),Zero,else_label)] @
@@ -119,7 +119,18 @@ let converti program = (*On stocke le resultat des instructions dans A(0)*)
       [Slabel(else_label)] @ eval_else @
       (*Sortie du If*)
       [Slabel(endif_label)])
+    
+    |Swhile(cond,stmt) -> (
+      let cond_eval = eval_expr cond off_set var_locales in
+      let stmt_eval = eval_stmt ~main:main var_locales stmt_if off_set in
+      let loop_label = fresh_label "loop" in
+      let endloop_label = fresh_label "endloop" in
 
+      [Slabel(loop_label)] @ cond_eval @ [Scond(Beq,A(0),Zero,endloop_label)] @
+      stmt_eval @
+      [Slabel(endloop_label)]
+    )
+    
     (*|_ -> print_string "Pas codee eval_stmt"; failwith "Pascodee "*)
 
   in 

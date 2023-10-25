@@ -62,6 +62,7 @@ stmt:
   | IF LP e=expr RP b1=suite ELSE b2=suite { Sif(e,b1,b2) }
   | COM { Sblock([]) }
   | BCOM { Sblock([]) }
+  | WHILE LP e=expr RP b = suite {Swhile(e,b)}
 
 ;
 
