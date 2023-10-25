@@ -20,6 +20,7 @@ and expr =
   | Not of expr
   | Op of binop * expr * expr
   | Ecall of string * expr list
+  | Deref of string
 
 and const = 
   | Inti of int
