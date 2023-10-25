@@ -8,7 +8,7 @@ type stmt =
   | Sjump of jump
   | Slabel of string
   | Ssyscall
-  | Scond of cond2*registre*registre
+  | Scond of cond*registre*registre
 and cond =
   |Beq
   |Bne
