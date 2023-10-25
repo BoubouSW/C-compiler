@@ -8,7 +8,12 @@ type stmt =
   | Sjump of jump
   | Slabel of string
   | Ssyscall
-
+  | Scond of cond2*registre*registre
+and cond =
+  |Beq
+  |Bne
+  |Blt
+  |Bge
 and expr =
   | Intm of int
 
