@@ -1,15 +1,15 @@
 int test(int x) {
     //test
-    printint(5);
+    printint(x);
     /* test ffdsd
-    dsqdjlkjd
-    effdsgreg
-    dfgdfgfd
+    dsqdjlkjd '
+    effdsgreg printint duHQSDQJSD(-"è_é&çàc ")
+    dfgdfgfd dddd8887 jfqhig int printint if 
     */
-    return 1; //ici la print
+    return 1; //ici la printint if if else
 }
 
 int main() {
-    printint(test(1));
+    printint(test(4));
     return 0;
 }

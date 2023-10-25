@@ -5,11 +5,11 @@
 /* def token */
 
 %token <int> CST
-%token <string> IDENT COM
+%token <string> IDENT COM BCOM
 %token INT VOID RETURN PRINTINT
 %token AND OR NOT IF ELSE
 %token LEQ GEQ LE GE EQQ NEQ
-%token EOF  BC EC
+%token EOF
 %token LP RP LB RB
 %token PLUS MINUS TIMES DIV MOD
 %token EQ
@@ -61,7 +61,7 @@ stmt:
   | IF LP e=expr RP b=suite { Sif(e,b,Sblock([])) }
   | IF LP e=expr RP b1=suite ELSE b2=suite { Sif(e,b1,b2) }
   | COM { Sblock([]) }
-  | BC list(IDENT) EC { Sblock([]) }
+  | BCOM { Sblock([]) }
 
 ;
 
