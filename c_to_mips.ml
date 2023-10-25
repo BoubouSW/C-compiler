@@ -9,45 +9,6 @@ let associe_binop op = match op with
   |Add -> Addm
   | _ -> print_string "Pas codee associe_binop";failwith "Pas un binop"
 
-let eval_comparaison op e1 e2 off_set var_locales = match op with
-  |Eq -> 
-    (*evaluations des expressions*)
-    (eval_expr e1 off_set var_locales)
-    @[Sbinopi(Sw,A(0),Sp,Intm(-4*off_set))]
-    @(eval_expr e2 (off_set+1) var_locales)
-    @[Sbinopi(Lw,T(0),Sp,Intm(-4*off_set));
-
-    Sbinop(Slt,T(1),T(0),A(0)); (* e1 < e2 *)
-    Sbinop(Slt,A(0),A(0),T(0)); (* e2 < e1*)
-    Sbinop(Addm,A(0),T(1),A(0)); (* A(0) = 0 lorsque les deux conditions sont fausse*)
-    Smonopi(Li,T(0),Intm(1)); Sbinop(Slt,A(0),A(0),T(0))]  (* A(0) < 1 *)
-
-  |Neq ->  (eval_expr e1 off_set var_locales)
-    @[Sbinopi(Sw,A(0),Sp,Intm(-4*off_set))]
-    @(eval_expr e2 (off_set+1) var_locales)
-    @[Sbinopi(Lw,T(0),Sp,Intm(-4*off_set));
-    
-    Sbinop(Sub,A(0),T(0),A(0))]
-  
-  |Leq -> 
-    (eval_expr e1 off_set var_locales)
-    @[Sbinopi(Sw,A(0),Sp,Intm(-4*off_set))]
-    @(eval_expr e2 (off_set+1) var_locales)
-    @[Sbinopi(Lw,T(0),Sp,Intm(-4*off_set));
-
-    Sbinopi(Addi,T(0),T(0),Intm(1)) (* e2' = e2+1*)
-    Sbinop(Slt,A(0),T(0),A(0))] (* e1 < e2' <=> e1 <= e2*)
-  
-  |Le ->     
-    (eval_expr e1 off_set var_locales)
-    @[Sbinopi(Sw,A(0),Sp,Intm(-4*off_set))]
-    @(eval_expr e2 (off_set+1) var_locales)
-    @[Sbinopi(Lw,T(0),Sp,Intm(-4*off_set));
-
-    Sbinop(Slt,A(0),T(0),A(0))] (* e1 < e2*)
-  
-  |Geq -> eval_comparaison Leq e2 e1 off_set var_locales
-  |Ge -> eval_comparaison Le e2 e1 off_set var_locales
 
 let init_cpt = let cpt = ref 0 in cpt
 let fresh_label (str:string) =
@@ -79,7 +40,7 @@ let converti program = (*On stocke le resultat des instructions dans A(0)*)
       @(eval_expr e2 (off_set+1) var_locales)
       @[Sbinopi(Lw,T(0),Sp,Intm(-4*off_set));Smonop(Divm,T(0),A(0));Smonop(Smf,A(0),Hi)]
 
-    |_ -> print_string "Pas codee eval_binop"; failwith "Pascodee "
+    |_ -> eval_comparaison op e1 e2 off_set var_locales
 
   and eval_comparaison op e1 e2 off_set var_locales = match op with
     |Eq -> 
@@ -172,7 +133,7 @@ let converti program = (*On stocke le resultat des instructions dans A(0)*)
 
     and eval_stmt ?(main=false) ?(off_set_local = ref 0) var_locales stmt off_set = match stmt with
                       (*off_set_local correspond aux nombre de variables locales*)
-    |Sblock(l) Beq->  
+    |Sblock(l)->  
       List.fold_left 
         (fun instr s-> 
           instr@(eval_stmt ~main:main ~off_set_local:off_set_local var_locales s (off_set))) 
