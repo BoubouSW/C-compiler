@@ -5,11 +5,11 @@
 /* def token */
 
 %token <int> CST
-%token <string> IDENT
+%token <string> IDENT COM
 %token INT VOID RETURN PRINTINT
 %token AND OR NOT IF ELSE
 %token LEQ GEQ LE GE EQQ NEQ
-%token EOF 
+%token EOF  BC EC
 %token LP RP LB RB
 %token PLUS MINUS TIMES DIV MOD
 %token EQ
@@ -33,7 +33,7 @@
 %%
 
 file: 
-  | d = def* ; EOF {{defs = d }} 
+  | d = def* ; EOF {{defs = d }}
 ;
 
 types:
@@ -60,6 +60,8 @@ stmt:
   | typ = types nom = IDENT EQ e = expr SEMICOLON { Sblock([Svar(typ,nom);Sassign(nom,e)]) }
   | IF LP e=expr RP b=suite { Sif(e,b,Sblock([])) }
   | IF LP e=expr RP b1=suite ELSE b2=suite { Sif(e,b1,b2) }
+  | COM { Sblock([]) }
+  | BC list(IDENT) EC { Sblock([]) }
 
 ;
 

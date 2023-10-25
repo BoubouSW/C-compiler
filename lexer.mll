@@ -19,6 +19,7 @@ let digit = ['0'-'9']
 let ident = letter (letter | digit)*
 let integer = ['0'-'9']+
 let space = [' ' '\t']
+let comment = '/''/' [^'\n']*
 
 rule token = parse
   | '\n'    { newline lexbuf; token lexbuf }
@@ -48,5 +49,7 @@ rule token = parse
   | integer as s { CST (int_of_string s) }
   | eof     { EOF }
   | '\r'    { newline lexbuf; token lexbuf }
-  | '/''/' {newline lexbuf; token lexbuf}
+  | comment as s { COM(s) }
+  | '/''*' { BC }
+  | '*''/' { EC }
   | _ as c  { raise (Lexing_error c) }

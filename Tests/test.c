@@ -1,6 +1,12 @@
 int test(int x) {
-    printint(x);
-    return 1;
+    //test
+    printint(5);
+    /* test ffdsd
+    dsqdjlkjd
+    effdsgreg
+    dfgdfgfd
+    */
+    return 1; //ici la print
 }
 
 int main() {
