@@ -11,7 +11,7 @@ let associe_binop op = match op with
 
 
 
-let converti program = (*On stocke le resultat des instructions dans a(0)*)
+let converti program = (*On stocke le resultat des instructions dans A(0)*)
   
   let rec eval_binop op e1 e2 off_set var_locales= match op,e1,e2 with
 
@@ -24,17 +24,17 @@ let converti program = (*On stocke le resultat des instructions dans a(0)*)
     |Mul,_,_|Sub,_,_|Add,_,_ -> (eval_expr e1 off_set var_locales)
       @[Sbinopi(Sw,A(0),Sp,Intm(-4*off_set))]
       @(eval_expr e2 (off_set+1) var_locales)
-      @[Sbinopi(Lw,T(0),Sp,Intm(-4*off_set));Sbinop(associe_binop op,A(0),A(0),T(0))]
+      @[Sbinopi(Lw,T(0),Sp,Intm(-4*off_set));Sbinop(associe_binop op,A(0),T(0),A(0))]
 
     |Div,_,_ -> (eval_expr e1 off_set var_locales)
       @[Sbinopi(Sw,A(0),Sp,Intm(-4*off_set))]
       @(eval_expr e2 (off_set+1) var_locales)
-      @[Sbinopi(Lw,T(0),Sp,Intm(-4*off_set));Smonop(Divm,T(0),A(0));Smonop(Smf,A(0),Hi)]
+      @[Sbinopi(Lw,T(0),Sp,Intm(-4*off_set));Smonop(Divm,T(0),A(0));Smonop(Smf,A(0),Lo)]
 
     |Mod,_,_ -> (eval_expr e1 off_set var_locales)
       @[Sbinopi(Sw,A(0),Sp,Intm(-4*off_set))]
       @(eval_expr e2 (off_set+1) var_locales)
-      @[Sbinopi(Lw,T(0),Sp,Intm(-4*off_set));Smonop(Divm,T(0),A(0));Smonop(Smf,A(0),Lo)]
+      @[Sbinopi(Lw,T(0),Sp,Intm(-4*off_set));Smonop(Divm,T(0),A(0));Smonop(Smf,A(0),Hi)]
 
     |_ -> print_string "Pas codee eval_binop"; failwith "Pascodee "
 
@@ -61,7 +61,7 @@ let converti program = (*On stocke le resultat des instructions dans a(0)*)
 
     |Var(s) -> 
       (match Hashtbl.find_opt var_locales s with
-        |Some(Intm(n)) -> [Sbinopi(Lw,A(0),Sp,Intm(-4*n))] 
+        |Some(Intm(n)) -> [Sbinopi(Lw,A(0),Sp,Intm(n))] 
         |_ -> print_string ("variable "^s^" non definie\n");
     failwith "undefined")
 
@@ -70,20 +70,34 @@ let converti program = (*On stocke le resultat des instructions dans a(0)*)
 
 
 
-    and eval_stmt ?(main=false) var_locales stmt off_set = match stmt with
+    and eval_stmt ?(main=false) ?(off_set_local = ref 0) var_locales stmt off_set = match stmt with
+                      (*off_set_local correspond aux nombre de variables locales*)
+    |Sblock(l) ->  
+      List.fold_left 
+        (fun instr s-> 
+          instr@(eval_stmt ~main:main ~off_set_local:off_set_local var_locales s (off_set))) 
+        [] l (* Le list.fold_left est equivalent a un List.concat List.map*)
 
-    |Sblock(l) -> List.fold_left (fun instr s-> instr@(eval_stmt ~main:main var_locales s off_set)) [] l
+    |Sval(e) -> eval_expr e (off_set+ !off_set_local) var_locales
 
-    |Sval(e) -> eval_expr e off_set var_locales
+    |Svar(_,s) -> incr off_set_local;
+      Hashtbl.add var_locales s (Intm(-4*(!off_set_local + off_set -1)));
+      []
+    
+    |Sassign(var,e) when Hashtbl.mem var_locales var -> let e_eval = eval_expr e (off_set+ !off_set_local) var_locales in
+      e_eval@[Sbinopi(Sw,A(0),Sp,Hashtbl.find var_locales var)]
+
+    |Sassign(var,_) -> print_string ("variable "^var^" non definie\n");
+      failwith "undefined"
 
     |Sprintint(e) -> 
-      (eval_expr e off_set var_locales) (*Evalue l'expression*)
+      (eval_expr e (off_set+ !off_set_local) var_locales) (*Evalue l'expression*)
       @ [Smonopi(Li,V0,Intm(1));Ssyscall; (*Print l'expression*)
       Smonopi(Li,A(0),Intm(10));Smonopi(Li,V0,Intm(11));Ssyscall] (*retour a la ligne*)
 
-    |Sreturn(e) when main = true -> (eval_expr e off_set var_locales)@[Smonopi(Li,V0,Intm(10));Ssyscall]
+    |Sreturn(e) when main = true -> (eval_expr e (off_set+ !off_set_local) var_locales)@[Smonopi(Li,V0,Intm(10));Ssyscall]
 
-    |Sreturn(e) -> (eval_expr e off_set var_locales)@[Sbinopi(Lw,Ra,Sp,Intm(0));Sjump(Jr(Ra))]
+    |Sreturn(e) -> (eval_expr e (off_set+ !off_set_local) var_locales)@[Sbinopi(Lw,Ra,Sp,Intm(0));Sjump(Jr(Ra))]
 
     |_ -> print_string "Pas codee eval_stmt"; failwith "Pascodee "
 
@@ -92,7 +106,7 @@ let converti program = (*On stocke le resultat des instructions dans a(0)*)
     (fun instr fonction ->
       (* On ajoute les arguments de la fonction dans le contexte*)
       let variables_locales  = Hashtbl.create 100 in
-      List.iteri (fun i (Args(_,arg)) -> Hashtbl.add variables_locales arg (Intm(i+1))) fonction.args;
+      List.iteri (fun i (Args(_,arg)) -> Hashtbl.add variables_locales arg (Intm(4*(i+1)))) fonction.args;
       let corps_de_la_fonction = eval_stmt ~main:(fonction.name="main") variables_locales fonction.body (1+(List.length fonction.args)) in 
       (* L'argument main est à true lorsque la fonction etudiee est main, et donc ajoute a la fin de la fonction un syscall pour exit*)
       (* Les premiers elements de la pile sont occupes par les arguments et ra*)
