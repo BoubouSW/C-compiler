@@ -113,7 +113,7 @@ let converti program = (*On stocke le resultat des instructions dans A(0)*)
           (eval_expr arg (off_set+i+1) var_locales)@[Sbinopi(Sw,A(0),Sp,Intm(-4*(off_set+i+1)))]) l) in
 
           (*On deplace Sp a la fin de la stack, et on met a l'indice 0 ra, et aux indices suivant les valeurs des arguments de la fonction*)
-      assigne_les_variables@[Sbinopi(Addi,Sp,Sp,Intm(-4*(off_set)));Sbinopi(Addi,A(1),A(1),Intm(off_set))]@[Sjump(Jal(f));Sbinopi(Addi,Sp,Sp,Intm(4*(off_set)));Sbinopi(Addi,A(1),A(1),Intm(-off_set))]
+      assigne_les_variables@[Sbinopi(Addi,Sp,Sp,Intm(-4*(off_set)));Sbinopi(Addi,T(2),T(2),Intm(off_set))]@[Sjump(Jal(f));Sbinopi(Addi,Sp,Sp,Intm(4*(off_set)));Sbinopi(Addi,T(2),T(2),Intm(-off_set))]
 
     |Const(Null) -> []
     
@@ -123,7 +123,7 @@ let converti program = (*On stocke le resultat des instructions dans A(0)*)
         |_ -> print_string ("variable "^s^" non definie\n");
         failwith "undefined")
     |Esper(s)->(match Hashtbl.find_opt var_locales s with
-      |Some(Intm(n)) -> [Sbinopi(Addi,A(0),A(1),Intm(n/(-4)))] 
+      |Some(Intm(n)) -> [Sbinopi(Addi,A(0),T(2),Intm(n/(-4)))] 
       |_ -> print_string ("variable "^s^" non definie\n");
       failwith "undefined")
 
@@ -214,7 +214,7 @@ let converti program = (*On stocke le resultat des instructions dans A(0)*)
       then 
         instr
         @[Slabel(fonction.name);Sbinopi(Sw,Ra,Sp,Intm(0))]
-        @corps_de_la_fonction
+        @corps_de_la_fonction@[Sbinopi(Lw,Ra,Sp,Intm(0));Sjump(Jr(Ra))]  
       else 
         instr
         @[Slabel("main")]

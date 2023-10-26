@@ -1,7 +1,7 @@
 int fact(int n) {
     int y;
     int z;
-    print(&z);
+    printint(&z);
 
 }
 
@@ -13,6 +13,7 @@ int g(){
 
 int main() {
     int x;
+    printint(&x);
     g();
     return 0;
 }
