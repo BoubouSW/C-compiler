@@ -59,6 +59,7 @@ stmt:
   | RETURN e = expr SEMICOLON { Sreturn e }
   | typ = types nom = IDENT SEMICOLON { Svar(typ,nom) }
   | s = IDENT EQ e = expr SEMICOLON { Sassign(s,e) }
+  | TIMES e=expr EQ e2=expr SEMICOLON { Sassign_pointeur(Pointeur(e),e2)} 
   | typ = types nom = IDENT EQ e = expr SEMICOLON { Sblock([Svar(typ,nom);Sassign(nom,e)]) }
   | IF LP e=expr RP b=suite { Sif(e,b,Sblock([])) }
   | IF LP e=expr RP b1=suite ELSE b2=suite { Sif(e,b1,b2) }
@@ -77,6 +78,7 @@ const:
 expr:
   | c = const { Const c }
   | i = IDENT { Var(i) }
+  | TIMES e=expr {Pointeur(e)} 
   | NOT e = expr %prec not { Not(e) }
   | MINUS e = expr %prec uminus { Minus(e) } 
   | e1 = expr o = op e2 = expr { Op (o, e1, e2) }

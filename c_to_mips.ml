@@ -134,7 +134,7 @@ let converti program = (*On stocke le resultat des instructions dans A(0)*)
 
     and eval_stmt ?(main=false) ?(off_set_local = ref 0) var_locales stmt off_set = match stmt with
                       (*off_set_local correspond aux nombre de variables locales*)
-    |Sblock(l)->  
+    |Sblock(l) ->  
       List.fold_left 
         (fun instr s-> 
           instr@(eval_stmt ~main:main ~off_set_local:off_set_local var_locales s (off_set))) 
@@ -195,8 +195,23 @@ let converti program = (*On stocke le resultat des instructions dans A(0)*)
       let _ = def,cond,change,stmt in
       []
     )
-
+    |Sassign_pointeur(e1,e2)-> let deplace_Sp=assigne_pointeur e1 var_locales in
+                                eval_expr e2 (off_set+ !off_set_local) var_locales @
+                                deplace_Sp@
+                                [Sbinopi(Sw,A(0),Sp,Intm(0));Smonop(Move,Sp,T(4))] 
+      
     (*|_ -> print_string "Pas codee eval_stmt"; failwith "Pascodee "*)
+
+
+  and assigne_pointeur point var_locales=match point with
+    |Pointeur(e1)->let avant=assigne_pointeur e1 var_locales in
+                      avant@[ Sbinopi(Lw,T(3),Sp,Intm(0));(*recuperation de la valeur du pointeur*)
+                              Sbinop(Mulm,T(3),T(3),T(5));(*mise en forme de l'adresse ($t5 = -4)*)
+                              Sbinop(Addm,Sp,Fp,T(3));] (*deplacement de Sp*)
+    |Var(s) when Hashtbl.mem var_locales s ->let adr=Hashtbl.find var_locales s in [Sbinopi(Addi,T(5),Zero,Intm(-4));Smonop(Move,T(4),Sp);Sbinopi(Addi,Sp,Fp,adr)] (*sauvegarde de Sp puis déplacement sur la variable*)
+    |Var(s)->failwith ("variable "^s^" non definie") 
+    |_->failwith("ceci n'est pas un pointeur") 
+
 
   in 
     List.fold_left 

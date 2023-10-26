@@ -7,6 +7,7 @@ type stmt =
   | Sreturn of expr
   | Svar of types*string
   | Sassign of string*expr
+  | Sassign_pointeur of expr * expr
   | Sif of expr*stmt*stmt
   | Swhile of expr*stmt
   | Sfor of stmt*expr*stmt*stmt
@@ -17,6 +18,7 @@ and args_fun =
 and expr =
   | Const of const
   | Var of string
+  | Pointeur of expr 
   | Minus of expr
   | Not of expr
   | Op of binop * expr * expr
