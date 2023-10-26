@@ -1,12 +1,19 @@
 int fact(int n) {
-    if (n) {
-        &n;
-        return n*fact(n-1); 
-    }
-    else { return n+1; }
+    int y;
+    int z;
+    print(&z);
+
+}
+
+int g(){
+    int x;
+    int y;
+    fact(2);
 }
 
 int main() {
-    printint(fact(12));
+    int x;
+    print(&z);
+    g();
     return 0;
 }

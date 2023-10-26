@@ -25,6 +25,7 @@ let string_binop = function
   | And -> "and"
   | Xor -> "xor"
   | Or-> "or"
+  | _-> "slt"
 let string_binopi = function
   | Addi -> "addi"
   | Andi -> "andi"
