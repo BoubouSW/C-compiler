@@ -13,7 +13,6 @@ int g(){
 
 int main() {
     int x;
-    print(&z);
     g();
     return 0;
 }
