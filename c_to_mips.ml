@@ -68,7 +68,7 @@ let converti program = (*On stocke le resultat des instructions dans A(0)*)
       @(eval_expr e2 (off_set+1) var_locales)
       @[Sbinopi(Lw,T(0),Sp,Intm(-4*off_set));
 
-      Sbinopi(Addi,T(0),T(0),Intm(1)); (* e2' = e2+1*)
+      Sbinopi(Addi,A(0),A(0),Intm(1)); (* e2' = e2+1*)
       Sbinop(Slt,A(0),T(0),A(0))] (* e1 < e2' <=> e1 <= e2*)
     
     |Le ->     
@@ -126,6 +126,9 @@ let converti program = (*On stocke le resultat des instructions dans A(0)*)
       |Some(Intm(n)) -> [Sbinopi(Addi,A(0),T(2),Intm(n/(-4)))] 
       |_ -> print_string ("variable "^s^" non definie\n");
       failwith "undefined")
+    |Pointeur(p)->(accede_pointeur (Pointeur(p)) var_locales)@(*on met Sp sur l'adresse pointée*)
+                  [Sbinopi(Lw,A(0),Sp,Intm(0));Smonop(Move,Sp,T(4))] 
+
 
     |_ -> print_string "Pas codee eval_expr";failwith "Pascodee "
 
@@ -195,7 +198,7 @@ let converti program = (*On stocke le resultat des instructions dans A(0)*)
       let _ = def,cond,change,stmt in
       []
     )
-    |Sassign_pointeur(e1,e2)-> let deplace_Sp=assigne_pointeur e1 var_locales in
+    |Sassign_pointeur(e1,e2)-> let deplace_Sp=accede_pointeur e1 var_locales in
                                 eval_expr e2 (off_set+ !off_set_local) var_locales @
                                 deplace_Sp@
                                 [Sbinopi(Sw,A(0),Sp,Intm(0));Smonop(Move,Sp,T(4))] 
@@ -203,12 +206,15 @@ let converti program = (*On stocke le resultat des instructions dans A(0)*)
     (*|_ -> print_string "Pas codee eval_stmt"; failwith "Pascodee "*)
 
 
-  and assigne_pointeur point var_locales=match point with
-    |Pointeur(e1)->let avant=assigne_pointeur e1 var_locales in
+  and accede_pointeur point var_locales=match point with
+    |Pointeur(e1)->let avant=accede_pointeur e1 var_locales in
                       avant@[ Sbinopi(Lw,T(3),Sp,Intm(0));(*recuperation de la valeur du pointeur*)
                               Sbinop(Mulm,T(3),T(3),T(5));(*mise en forme de l'adresse ($t5 = -4)*)
                               Sbinop(Addm,Sp,Fp,T(3));] (*deplacement de Sp*)
-    |Var(s) when Hashtbl.mem var_locales s ->let adr=Hashtbl.find var_locales s in [Sbinopi(Addi,T(5),Zero,Intm(-4));Smonop(Move,T(4),Sp);Sbinopi(Addi,Sp,Fp,adr)] (*sauvegarde de Sp puis déplacement sur la variable*)
+    |Var(s) when Hashtbl.mem var_locales s ->let adr=Hashtbl.find var_locales s in [Sbinopi(Addi,T(5),Zero,Intm(-4));
+                                                                                    Sbinop(Mulm,T(6),T(5),T(2));
+                                                                                    Sbinopi(Addi,T(6),T(6),adr);
+                                                                                    Smonop(Move,T(4),Sp);Sbinop(Addm,Sp,Fp,T(6))] (*sauvegarde de Sp puis déplacement sur la variable*)
     |Var(s)->failwith ("variable "^s^" non definie") 
     |_->failwith("ceci n'est pas un pointeur") 
 
