@@ -195,9 +195,12 @@ let converti program = (*On stocke le resultat des instructions dans A(0)*)
     )
 
     |Sfor(def,cond,change,stmt) -> (
-      let _ = def,cond,change,stmt in
-      []
+      let def_eval = eval_stmt ~main:main var_locales def off_set in
+      let body = Sblock([stmt;change]) in
+      let body_eval = eval_stmt ~main:main var_locales (Swhile(cond,body)) off_set in
+      def_eval @  body_eval
     )
+
     |Sassign_pointeur(e1,e2)-> let deplace_Sp=accede_pointeur e1 var_locales in
                                 eval_expr e2 (off_set+ !off_set_local) var_locales @
                                 deplace_Sp@

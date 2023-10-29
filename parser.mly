@@ -66,9 +66,7 @@ stmt:
   | COM { Sblock([]) }
   | BCOM { Sblock([]) }
   | WHILE LP e=expr RP b = suite {Swhile(e,b)}
-
-  | FOR LP def=stmt SEMICOLON cond=expr SEMICOLON change=stmt RP b=suite {Sfor(def,cond,change,b)} 
-
+  | FOR LP def=stmt cond=expr SEMICOLON change=stmt RP b=suite {Sfor(def,cond,change,b)}
 ;
 
 const:
