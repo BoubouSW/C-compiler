@@ -2,7 +2,6 @@ void fibo(int n,int* ret){
     if(n<=1){
         *ret=1;
     }
-
     if (n>1){ 
         int y;
         int z;
@@ -18,6 +17,10 @@ int main(){
     int* y=&x;
     int** z=&y;
     fibo(10,*z);
-    printint(**z);
+    printint(**z == 89);
+
+    int w;
+    fibo(6, &w);
+    printint(w == 13);
     return 0;
 } 

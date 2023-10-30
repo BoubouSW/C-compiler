@@ -1,18 +1,28 @@
-int f(int x){
-    return x+1;
+int passageEtRetour(int n){
+    return 2*n;
 }
 
-int g(int x){
-    return 2*x;
+int nonEcrasementDeValeur(int n){
+    for(int i=0 ; i < 5 ; i++){
+        int j = 3;
+    }
+    return n;
+}
+
+int modificationLocale(int n){
+    n = 2*n;
+    return n;
+}
+
+int composition(int n){
+    return 2*n;
 }
 
 int main() {
-    int x;
-    x = 10;
-    int y;
-    y = 9;
-    printint(x+y); // 19
-    printint(g(f(x+3))); // 28
-
+    int n = 2;
+    printint(passageEtRetour(n) == 2 * n);
+    printint(nonEcrasementDeValeur(n) == n);
+    printint(modificationLocale(n) == 2*n);
+    printint(composition(composition(n)) == 4*n);
     return 0;
 }

@@ -15,7 +15,7 @@ int fibo(int n) {
 }
 
 int main() {
-    printint(fact(12)); // 479001600
-    printint(fibo(15)); //610
+    printint(fact(12) == 479001600);
+    printint(fibo(15) == 610);
     return 0;
 }
