@@ -17,7 +17,7 @@ Nous avons fait toutes les fonctionnalités de base :
 - fonction printint
 
 Ensuite nous avons fait plusieurs extensions :
-- boucle while et for
+- boucle while et for (avec i++ possible)
 - pointeurs
 - les commentaires (// et /**/)
 
