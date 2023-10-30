@@ -52,7 +52,10 @@ def: tip = types ; nom = IDENT ; LP ; args = separated_list(COMMA,type_args_fun)
 suite:
   | LB ; s = list(stmt) ; RB { Sblock(s) }
 ;
- 
+
+for_incr:
+  | s = IDENT EQ e = expr { Sassign(s,e) }
+
 stmt:
   | e = expr SEMICOLON { Sval(e) }
   | PRINTINT LP e = expr RP SEMICOLON { Sprintint e }
@@ -66,7 +69,7 @@ stmt:
   | COM { Sblock([]) }
   | BCOM { Sblock([]) }
   | WHILE LP e=expr RP b = suite {Swhile(e,b)}
-  | FOR LP def=stmt cond=expr SEMICOLON change=stmt RP b=suite {Sfor(def,cond,change,b)}
+  | FOR LP def=stmt cond=expr SEMICOLON change=for_incr RP b=suite {Sfor(def,cond,change,b)}
 ;
 
 const:
