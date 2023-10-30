@@ -205,6 +205,10 @@ let converti program = (*On stocke le resultat des instructions dans A(0)*)
                                 eval_expr e2 (off_set+ !off_set_local) var_locales @
                                 deplace_Sp@
                                 [Sbinopi(Sw,A(0),Sp,Intm(0));Smonop(Move,Sp,T(4))] 
+    
+    |Sincr(s,Const(Inti(1))) -> let expr = Op(Add,(Var s),(Const (Inti 1))) in (eval_stmt var_locales (Sassign(s,expr)) off_set)
+    | _ -> assert false;
+
       
     (*|_ -> print_string "Pas codee eval_stmt"; failwith "Pascodee "*)
 
@@ -217,8 +221,8 @@ let converti program = (*On stocke le resultat des instructions dans A(0)*)
     |Var(s) when Hashtbl.mem var_locales s ->let adr=Hashtbl.find var_locales s in [Sbinopi(Addi,T(5),Zero,Intm(-4));
                                                                                     Sbinop(Mulm,T(6),T(5),T(2));
                                                                                     Sbinopi(Addi,T(6),T(6),adr);
-                                                                                    Smonop(Move,T(4),Sp);Sbinop(Addm,Sp,Fp,T(6))] (*sauvegarde de Sp puis déplacement sur la variable*)
-    |Var(s)->failwith ("variable "^s^" non definie") 
+                                                                                    Smonop(Move,T(4),Sp);Sbinop(Addm,Sp,Fp,T(6))] (*sauvegarde de Sp puis déplacement sur la variable*)                                                                         
+    |Var(s)->failwith ("variable "^s^" non definie")
     |_->failwith("ceci n'est pas un pointeur") 
 
 

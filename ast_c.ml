@@ -11,6 +11,7 @@ type stmt =
   | Sif of expr*stmt*stmt
   | Swhile of expr*stmt
   | Sfor of stmt*expr*stmt*stmt
+  | Sincr of string*expr
 
 and args_fun =
   | Args of types*string

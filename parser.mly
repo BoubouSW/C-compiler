@@ -55,6 +55,7 @@ suite:
 
 for_incr:
   | s = IDENT EQ e = expr { Sassign(s,e) }
+  | s=IDENT PLUS PLUS {Sincr(s,Const(Inti 1))}
 
 stmt:
   | e = expr SEMICOLON { Sval(e) }
@@ -70,6 +71,7 @@ stmt:
   | BCOM { Sblock([]) }
   | WHILE LP e=expr RP b = suite {Swhile(e,b)}
   | FOR LP def=stmt cond=expr SEMICOLON change=for_incr RP b=suite {Sfor(def,cond,change,b)}
+  | s=IDENT PLUS PLUS SEMICOLON {Sincr(s,Const(Inti 1))}
 ;
 
 const:
