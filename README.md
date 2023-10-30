@@ -8,6 +8,13 @@ Pour compiler :
 Pour exécuter :
 `spim -file my_file.c.s`
 
+Le compilateur fonctionne de la manière suivante:
+- 'parser' et 'lexer' convertissent le programme (d'extension .c) en liste d'instructions C ('ast_c')
+- 'c_to_mips' convertit cette liste d'instructions C ('ast_c') en liste d'instructions Mips ('ast_mips')
+- 'compiler' lit la liste d'instructions Mips ('ast_mips') et l'écrit dans un fichier d'extension .s
+- 'reader' lit un fichier d'extension .c et appelle à la suite: lexer, parser, c_to_mips, compiler
+- 'ptitgcc' prend un chemin vers un fichier d'extension .c et appelle 'reader' sur ce fichier
+  
 Nous avons fait toutes les fonctionnalités de base :
 - un seul type (int)
 - fonction à plusieurs arguments qui retourne une valeur
