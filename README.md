@@ -18,6 +18,6 @@ Nous avons fait toutes les fonctionnalités de base :
 
 Ensuite nous avons fait plusieurs extensions :
 - boucle while et for (avec i++ possible)
-- pointeurs
+- pointeurs (pas de distinction entre pointeur et integer)
 - les commentaires (// et /**/)
 
