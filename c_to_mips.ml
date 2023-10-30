@@ -142,9 +142,6 @@ let converti program = (*On stocke le resultat des instructions dans A(0)*)
     
     |Not (e) -> eval_comparaison Eq e (Const(Inti 0)) off_set var_locales  (*e==0*)
 
-
-
-
     and eval_stmt ?(main=false) ?(off_set_local = ref 0) var_locales stmt off_set = match stmt with
                       (*off_set_local correspond aux nombre de variables locales*)
     |Sblock(l) ->  
