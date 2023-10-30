@@ -173,8 +173,8 @@ let converti program = (*On stocke le resultat des instructions dans A(0)*)
 
     |Sif(cond,stmt_if,stmt_else) -> (
       let cond_eval = eval_expr cond off_set var_locales in
-      let eval_if = eval_stmt ~main:main var_locales stmt_if off_set in
-      let eval_else = eval_stmt ~main:main var_locales stmt_else off_set in
+      let eval_if = eval_stmt ~main:main ~off_set_local:off_set_local var_locales stmt_if off_set in
+      let eval_else = eval_stmt ~main:main ~off_set_local:off_set_local var_locales stmt_else off_set in
       let then_label = fresh_label "then" in
       let else_label = fresh_label "else" in
       let endif_label = fresh_label "endif" in
@@ -192,7 +192,7 @@ let converti program = (*On stocke le resultat des instructions dans A(0)*)
     
     |Swhile(cond,stmt) -> (
       let cond_eval = eval_expr cond off_set var_locales in
-      let stmt_eval = eval_stmt ~main:main var_locales stmt off_set in
+      let stmt_eval = eval_stmt ~main:main ~off_set_local:off_set_local var_locales stmt off_set in
       let loop_label = fresh_label "loop" in
       let endloop_label = fresh_label "endloop" in
 
@@ -202,9 +202,9 @@ let converti program = (*On stocke le resultat des instructions dans A(0)*)
     )
 
     |Sfor(def,cond,change,stmt) -> (
-      let def_eval = eval_stmt ~main:main var_locales def off_set in
+      let def_eval = eval_stmt ~main:main ~off_set_local:off_set_local var_locales def off_set in
       let body = Sblock([stmt;change]) in
-      let body_eval = eval_stmt ~main:main var_locales (Swhile(cond,body)) off_set in
+      let body_eval = eval_stmt ~main:main ~off_set_local:off_set_local var_locales (Swhile(cond,body)) off_set in
       def_eval @  body_eval
     )
 
