@@ -7,7 +7,7 @@ let associe_binop op = match op with
   |Mul -> Mulm
   |Sub -> Subm
   |Add -> Addm
-  | _ -> print_string "Pas codee associe_binop";failwith "Pas un binop"
+  | _ -> failwith "Pas une operation autorisee" (* Ce cas ne devrait pas arriver *)
 
 
 let init_cpt = let cpt = ref 0 in cpt
@@ -24,6 +24,7 @@ let converti program = (*On stocke le resultat des instructions dans A(0)*)
      -> (eval_expr e off_set var_locales)@[Sbinopi(Addi,A(0),A(0),Intm(i))]
      
     |Sub,e,Const(Inti (i)) -> (eval_expr e off_set var_locales)@[Sbinopi(Addi,A(0),A(0),Intm(-i))]
+
 
     |Mul,_,_|Sub,_,_|Add,_,_ -> (eval_expr e1 off_set var_locales)
       @[Sbinopi(Sw,A(0),Sp,Intm(-4*off_set))]
@@ -60,7 +61,7 @@ let converti program = (*On stocke le resultat des instructions dans A(0)*)
       @(eval_expr e2 (off_set+1) var_locales)
       @[Sbinopi(Lw,T(0),Sp,Intm(-4*off_set));
       
-      Sbinop(Subm,A(0),T(0),A(0))]
+      Sbinop(Subm,A(0),T(0),A(0))] (* e2-e1 *)
     
     |Leq -> 
       (eval_expr e1 off_set var_locales)
@@ -79,8 +80,9 @@ let converti program = (*On stocke le resultat des instructions dans A(0)*)
 
       Sbinop(Slt,A(0),T(0),A(0))] (* e1 < e2*)
     
-    |Geq -> eval_comparaison Leq e2 e1 off_set var_locales
+    |Geq -> eval_comparaison Leq e2 e1 off_set var_locales (* e1 >= e2 est la meme chose que e2 <=e1 *)
     |Ge -> eval_comparaison Le e2 e1 off_set var_locales
+    
     |Or -> 
       (eval_expr e1 off_set var_locales)
       @[Sbinopi(Sw,A(0),Sp,Intm(-4*off_set))]
@@ -96,24 +98,31 @@ let converti program = (*On stocke le resultat des instructions dans A(0)*)
         @[Sbinopi(Lw,T(0),Sp,Intm(-4*off_set));
         
         Sbinop(And,A(0),A(0),T(0))]
-    |_->failwith "pas codee comparaison"
+    |_->failwith "pas un operateur binaire" (* Ce cas ne devrait pas arriver *)
 
 
     and eval_expr e off_set var_locales = match e with
-    |Minus(expr) -> eval_binop Sub (Const(Inti 0)) expr off_set var_locales
+    |Minus(expr) -> eval_binop Sub (Const(Inti 0)) expr off_set var_locales (*0 - expr*)
 
     |Const(Inti(i)) -> [Smonopi(Li,A(0),Intm(i))]
 
     |Op(b,e1,e2) -> eval_binop b e1 e2 off_set var_locales
 
-    |Ecall(f,l) ->
+    |Ecall(f,l) -> (* Lors de l'appel de fonction, on deplace Sp a la fin de la pile, et on met a l'indice 0 ra, et aux indices suivants les valeurs des arguments de la fonction*)
       
       let assigne_les_variables = List.concat (List.mapi 
         (fun i arg ->
           (eval_expr arg (off_set+i+1) var_locales)@[Sbinopi(Sw,A(0),Sp,Intm(-4*(off_set+i+1)))]) l) in
 
-          (*On deplace Sp a la fin de la stack, et on met a l'indice 0 ra, et aux indices suivant les valeurs des arguments de la fonction*)
-      assigne_les_variables@[Sbinopi(Addi,Sp,Sp,Intm(-4*(off_set)));Sbinopi(Addi,T(2),T(2),Intm(off_set))]@[Sjump(Jal(f));Sbinopi(Addi,Sp,Sp,Intm(4*(off_set)));Sbinopi(Addi,T(2),T(2),Intm(-off_set))]
+      (* On stocke les valeurs des variables*)
+      assigne_les_variables
+      (* On met Sp a la fin de la pile*)
+      @[Sbinopi(Addi,Sp,Sp,Intm(-4*(off_set)))
+      ;Sbinopi(Addi,T(2),T(2),Intm(off_set))]
+      (* On effectue la fonction *)
+      @[Sjump(Jal(f));
+      (* On reprend l'ancien etat de la pile*)
+      Sbinopi(Addi,Sp,Sp,Intm(4*(off_set)));Sbinopi(Addi,T(2),T(2),Intm(-off_set))]
 
     |Const(Null) -> []
     
@@ -122,15 +131,16 @@ let converti program = (*On stocke le resultat des instructions dans A(0)*)
         |Some(Intm(n)) -> [Sbinopi(Lw,A(0),Sp,Intm(n))] 
         |_ -> print_string ("variable "^s^" non definie\n");
         failwith "undefined")
+
     |Esper(s)->(match Hashtbl.find_opt var_locales s with
       |Some(Intm(n)) -> [Sbinopi(Addi,A(0),T(2),Intm(n/(-4)))] 
       |_ -> print_string ("variable "^s^" non definie\n");
       failwith "undefined")
+
     |Pointeur(p)->(accede_pointeur (Pointeur(p)) var_locales)@(*on met Sp sur l'adresse pointée*)
                   [Sbinopi(Lw,A(0),Sp,Intm(0));Smonop(Move,Sp,T(4))] 
-
-
-    |_ -> print_string "Pas codee eval_expr";failwith "Pascodee "
+    
+    |Not (e) -> eval_comparaison Eq e (Const(Inti 0)) off_set var_locales  (*e==0*)
 
 
 
@@ -238,7 +248,7 @@ let converti program = (*On stocke le resultat des instructions dans A(0)*)
 
       (* On retire les variables locales du contexte*)
 
-      if fonction.name <> "main"
+      if fonction.name <> "main" (*Si la fonction n'est pas main, on rajoute un jump pour revenir a l'endroit ou a ete appele la fonction*)
       then 
         instr
         @[Slabel(fonction.name);Sbinopi(Sw,Ra,Sp,Intm(0))]

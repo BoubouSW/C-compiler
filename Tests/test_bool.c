@@ -10,5 +10,5 @@ int main() {
     printint(1 || 0);
     printint(0 || 0);
     printint((1+1==2) || (2 == 4 ));
-    return 0;
+    printint(!((2+2!=4) && (1+2==3)));
 }
