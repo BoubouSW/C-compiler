@@ -1,4 +1,4 @@
-void fibo(int n,int ret){
+void fibo(int n,int* ret){
     if(n<=1){
         *ret=1;
     }
@@ -15,8 +15,8 @@ void fibo(int n,int ret){
 
 int main(){
     int x;
-    int y=&x;
-    int z=&y;
+    int* y=&x;
+    int** z=&y;
     fibo(10,*z);
     printint(**z);
     return 0;

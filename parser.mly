@@ -43,9 +43,9 @@ types:
   | VOID { Void }
 
 type_args_fun:
-  | typ = types ; i = IDENT { Args(typ,i) }
+  | typ = types ; TIMES* ;i = IDENT { Args(typ,i) }
 
-def: tip = types ; nom = IDENT ; LP ; args = separated_list(COMMA,type_args_fun) ; RP ; bod =  suite 
+def: tip = types ;TIMES* ;nom = IDENT ; LP ; args = separated_list(COMMA,type_args_fun) ; RP ; bod =  suite 
   {{typ = tip ; name = nom ; args = args ; body = bod }}
 ;
 
@@ -61,10 +61,10 @@ stmt:
   | e = expr SEMICOLON { Sval(e) }
   | PRINTINT LP e = expr RP SEMICOLON { Sprintint e }
   | RETURN e = expr SEMICOLON { Sreturn e }
-  | typ = types nom = IDENT SEMICOLON { Svar(typ,nom) }
+  | typ = types TIMES* nom = IDENT SEMICOLON { Svar(typ,nom) }
   | s = IDENT EQ e = expr SEMICOLON { Sassign(s,e) }
   | TIMES e=expr EQ e2=expr SEMICOLON { Sassign_pointeur(Pointeur(e),e2)} 
-  | typ = types nom = IDENT EQ e = expr SEMICOLON { Sblock([Svar(typ,nom);Sassign(nom,e)]) }
+  | typ = types TIMES* nom = IDENT EQ e = expr SEMICOLON { Sblock([Svar(typ,nom);Sassign(nom,e)]) }
   | IF LP e=expr RP b=suite { Sif(e,b,Sblock([])) }
   | IF LP e=expr RP b1=suite ELSE b2=suite { Sif(e,b1,b2) }
   | COM { Sblock([]) }
