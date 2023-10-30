@@ -5,7 +5,7 @@ int main(){
     printint(8);
     printint(-8 * 2 % 3 + 5 - 1 / 4);
     printint(6);
-    print( 1 - 9 % 4 / 6 + 2 * 4);
+    printint( 1 - 9 % 4 / 6 + 2 * 4);
     printint(9);
 
     return 0;
