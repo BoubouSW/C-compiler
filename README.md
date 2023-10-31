@@ -1,6 +1,12 @@
 # C-compiler
-
 Creating a C compiler to MIPS
+
+Membres:
+- Pierre Neltner
+- Yann Girey
+- Axel Vivenot
+- James Camilleri
+- Clément Gilli
 
 Pour compiler :
 `./ptigcc my_file.c`
