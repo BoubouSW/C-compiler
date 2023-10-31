@@ -37,7 +37,7 @@ Ensuite nous avons fait plusieurs extensions :
 Précisions:
 - Le "else if()" n'est pas supporté, on utilisera "else { if () ... }"
 - Les caractères spéciaux ne sont pas autorisés dans les identifiants de fonctions/variables
-- On utilisera le modulo de la convention C pour les nombres négatifs (ex: '(-16) % 3' est égal à '-1' et non '-2')
+- On utilisera le modulo de la convention C pour les nombres négatifs (ex: '(-16) % 3' est égal à '-1' et non '2')
 
 Angles d'amélioration:
 - Redéfinir une variable (ex: 'int n = 1; int n = 2;') ne soulève pas d'erreurs
